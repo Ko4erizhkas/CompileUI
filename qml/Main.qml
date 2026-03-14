@@ -1,6 +1,8 @@
 import QtQuick
+import QtCore
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import CompileUI 1.0
 
 ApplicationWindow {
@@ -13,16 +15,53 @@ ApplicationWindow {
     FunctionPrototypeScanner {
         id: scanner
     }
-
-    menuBar: MenuBar {
-        Menu
+    menuBar: MenuBar
+    {
+        FileDialog
+        {
+            id: saveFileDialog
+            currentFolder: StandardPaths.standardLocations()[0]
+            fileMode: FileDialog.SaveFile
+        }
+        FileDialog
+        {
+            id: openFileDialog
+            currentFolder: StandardPaths.standardLocations()[0]
+            fileMode: FileDialog.OpenFile
+        }
+        FileDialog
+        {
+            id: saveAsFileDiolog
+            currentFolder: StandardPaths.standardLocations()[0]
+            fileMode: FileDialog.SaveFile
+            nameFilters: ["Text file (*.txt)", "Cpp file (*.cpp)"]
+        }
+                Menu
                 {
                     title: "Файл"
-                    Action {text : qsTr("Создать")}
-                    Action {text: qsTr("Открыть")}
-                    Action {text: qsTr("Сохранить")}
-                    Action {text: qsTr("Сохранить как")}
-                    Action {text: qsTr("Выход")}
+                    Action {
+                        text : qsTr("Создать")
+                        onTriggered: openFileDialog.open()
+                    }
+                    Action
+                    {
+                        text: qsTr("Открыть")
+                        onTriggered: openFileDialog.open()
+                    }
+                    Action
+                    {
+                        text: qsTr("Сохранить")
+                        onTriggered: saveFileDialog.open()
+                    }
+                    Action
+                    {
+                        text: qsTr("Сохранить как")
+                        onTriggered: saveAsFileDiolog.open()
+                    }
+                    Action
+                    {
+                        text: qsTr("Выход")
+                    }
                 }
                 Menu
                 {
@@ -63,7 +102,6 @@ ApplicationWindow {
         RowLayout {
             Layout.fillWidth: true
             spacing: 6
-
             Repeater {
                 model: [
                     "FileIcon",
