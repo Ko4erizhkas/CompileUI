@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import CompileUI 1.0
 
 ApplicationWindow {
     id: root
@@ -9,12 +10,49 @@ ApplicationWindow {
     visible: true
     title: "Compiler"
 
+    FunctionPrototypeScanner {
+        id: scanner
+    }
+
     menuBar: MenuBar {
-        Menu { title: "Файл" }
-        Menu { title: "Правка" }
-        Menu { title: "Текст" }
-        Menu { title: "Пуск" }
-        Menu { title: "Справка" }
+        Menu
+                {
+                    title: "Файл"
+                    Action {text : qsTr("Создать")}
+                    Action {text: qsTr("Открыть")}
+                    Action {text: qsTr("Сохранить")}
+                    Action {text: qsTr("Сохранить как")}
+                    Action {text: qsTr("Выход")}
+                }
+                Menu
+                {
+                    title: "Правка"
+                    Action {text: qsTr("Отменить")}
+                    Action {text: qsTr("Повторить")}
+                    Action {text: qsTr("Вырезать")}
+                    Action {text: qsTr("Копировать")}
+                    Action {text: qsTr("Вставить")}
+                    Action {text: qsTr("Удалить")}
+                    Action {text: qsTr("Выделить всё")}
+                }
+                Menu
+                {
+                    title: "Текст"
+                    Action {text: qsTr("Постановка задачи")}
+                    Action {text: qsTr("Грамматика")}
+                    Action {text: qsTr("Классификация грамматики")}
+                    Action {text: qsTr("Метод анализа")}
+                    Action {text: qsTr("Тестовый пример")}
+                    Action {text: qsTr("Список литературы")}
+                    Action {text: qsTr("Исходный код программы")}
+                }
+                Menu { title: "Пуск" }
+                Menu
+                {
+                    title: "Справка"
+                    Action {text: qsTr("Вызов справки")}
+                    Action {text: qsTr("О программе")}
+                }
     }
 
     ColumnLayout {
@@ -56,8 +94,11 @@ ApplicationWindow {
             id: sourceEditor
             Layout.fillWidth: true
             Layout.preferredHeight: 160
-            placeholderText: "Исходный текст"
+            placeholderText: "Введите прототип функции C++ (например: int sum(int a, int b);)"
             wrapMode: TextEdit.NoWrap
+
+            onTextChanged: outputEditor.text = scanner.scan(text)
+            Component.onCompleted: outputEditor.text = scanner.scan(text)
         }
 
         TextArea {
@@ -65,8 +106,8 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.fillHeight: true
             readOnly: true
-            placeholderText: "Результат"
-            wrapMode: TextEdit.NoWrap
+            placeholderText: "Ошибки сканера"
+            wrapMode: TextEdit.Wrap
         }
     }
 }

@@ -10,6 +10,8 @@ qt_standard_project_setup(REQUIRES 6.10)
 
 qt_add_executable(CompileUIQt
     src/main.cpp
+    src/functionprototypescanner.cpp
+    src/functionprototypescanner.h
 )
 
 qt_add_qml_module(CompileUIQt
