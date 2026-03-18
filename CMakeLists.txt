@@ -12,6 +12,8 @@ qt_add_executable(CompileUIQt
     src/main.cpp
     src/functionprototypescanner.cpp
     src/functionprototypescanner.h
+    src/textfilestorage.cpp
+    src/textfilestorage.h
 )
 
 qt_add_qml_module(CompileUIQt
