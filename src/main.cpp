@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     qmlRegisterType<FunctionPrototypeScanner>("CompileUI", 1, 0, "FunctionPrototypeScanner");
-    qmlRegisterType<TextFileStorage>("CompileUI", 1, 0, "TextfileStorage");
+    qmlRegisterType<TextFileStorage>("CompileUI", 1, 0, "TextFileStorage");
 
     QQmlApplicationEngine engine;
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,

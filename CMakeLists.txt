@@ -8,12 +8,18 @@ find_package(Qt6 6.10.2 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
+set(QT_QML_NO_CACHEGEN TRUE)
+
 qt_add_executable(CompileUIQt
     src/main.cpp
     src/functionprototypescanner.cpp
     src/functionprototypescanner.h
     src/textfilestorage.cpp
     src/textfilestorage.h
+    src/lexer/lexser.cpp
+    src/lexer/lexser.h
+    src/lexer/token/token.cpp
+    src/lexer/token/token.h
 )
 
 qt_add_qml_module(CompileUIQt

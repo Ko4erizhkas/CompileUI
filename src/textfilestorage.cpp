@@ -13,7 +13,58 @@ TextFileStorage::TextFileStorage(QObject *parent)
 
 bool TextFileStorage::saveToDefaultFile(const QString &text)
 {
-    const QString filePath = defaultFilePath();
+    return saveToPath(text, defaultFilePath());
+}
+
+QString TextFileStorage::loadFromDefaultFile()
+{
+    return loadFromPath(defaultFilePath());
+}
+
+QString TextFileStorage::defaultFilePath() const
+{
+    const QString appDataDir = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation);
+    return appDataDir + QStringLiteral("/sourceEditor.txt");
+}
+
+QString TextFileStorage::lastError() const
+{
+    return m_lastError;
+}
+
+bool TextFileStorage::saveToFile(const QString &text, const QUrl &fileUrl)
+{
+    return saveToPath(text, localPathFromUrl(fileUrl));
+}
+
+QString TextFileStorage::loadFromFile(const QUrl &fileUrl)
+{
+    return loadFromPath(localPathFromUrl(fileUrl));
+}
+
+QUrl TextFileStorage::buildFileUrl(const QUrl &folderUrl, const QString &fileName) const
+{
+    const QString folderPath = localPathFromUrl(folderUrl);
+    if (folderPath.isEmpty()) {
+        return QUrl();
+    }
+
+    const QString targetPath = QDir(folderPath).filePath(fileName);
+    return QUrl::fromLocalFile(targetPath);
+}
+
+QString TextFileStorage::fileNameFromUrl(const QUrl &fileUrl) const
+{
+    return QFileInfo(localPathFromUrl(fileUrl)).fileName();
+}
+
+bool TextFileStorage::saveToPath(const QString &text, const QString &filePath)
+{
+    if (filePath.isEmpty()) {
+        m_lastError = QStringLiteral("Не выбран файл для сохранения");
+        return false;
+    }
+
     const QFileInfo fileInfo(filePath);
     const QString folder = fileInfo.absolutePath();
 
@@ -37,13 +88,17 @@ bool TextFileStorage::saveToDefaultFile(const QString &text)
     return true;
 }
 
-QString TextFileStorage::loadFromDefaultFile()
+QString TextFileStorage::loadFromPath(const QString &filePath)
 {
-    const QString filePath = defaultFilePath();
+    if (filePath.isEmpty()) {
+        m_lastError = QStringLiteral("Не выбран файл для открытия");
+        return QString();
+    }
+
     QFile file(filePath);
 
     if (!file.exists()) {
-        m_lastError.clear();
+        m_lastError = QStringLiteral("Файл не найден: %1").arg(filePath);
         return QString();
     }
 
@@ -61,13 +116,15 @@ QString TextFileStorage::loadFromDefaultFile()
     return result;
 }
 
-QString TextFileStorage::defaultFilePath() const
+QString TextFileStorage::localPathFromUrl(const QUrl &fileUrl) const
 {
-    const QString appDataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    return appDataDir + QStringLiteral("/sourceEditor.txt");
-}
+    if (!fileUrl.isValid()) {
+        return QString();
+    }
 
-QString TextFileStorage::lastError() const
-{
-    return m_lastError;
+    if (fileUrl.isLocalFile()) {
+        return fileUrl.toLocalFile();
+    }
+
+    return fileUrl.toString(QUrl::PreferLocalFile);
 }
