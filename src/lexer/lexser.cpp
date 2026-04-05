@@ -5,6 +5,7 @@
 
 
 Lexer::Lexer(QObject* parent) : QObject{parent} {}
+
 inline bool Lexer::isId(QChar c)
 {
 	return c.isLetter() || c == '_';
