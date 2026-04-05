@@ -362,4 +362,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-build-static/
+build-static-release/
+build-static-debug/
+build/
+tests/
+.vscode/

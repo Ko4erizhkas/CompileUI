@@ -7,7 +7,7 @@ FunctionPrototypeScanner::FunctionPrototypeScanner(QObject *parent)
     : QObject(parent)
 {
 }
-
+    
 QString FunctionPrototypeScanner::scan(const QString &prototype) const
 {
     const QString input = prototype.trimmed();
