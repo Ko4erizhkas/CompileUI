@@ -5,6 +5,7 @@ import QtQuick.Controls.Universal
 import QtQuick.Layouts
 import QtQuick.Dialogs
 import CompileUI 1.0
+import Lexer 1.0
 
 ApplicationWindow {
     id: root
@@ -21,13 +22,13 @@ ApplicationWindow {
     property bool closeAfterSave: false
     property bool closeConfirmationActive: false
     property bool closeApproved: false
-    FunctionPrototypeScanner {
-        id: scanner
-    }
+
     TextFileStorage {
         id: fileStorage
     }
-
+    Lexer {
+        id: lexer
+    }
     function finalExit()
     {
         closeAfterSave = false
@@ -126,7 +127,7 @@ ApplicationWindow {
             sourceEditor.redo()
             break
         case "analyze":
-            outputEditor.text = scanner.scan(sourceEditor.text)
+            outputEditor.text = lexer.scan(sourceEditor.text)
             break
         case "userInfo":
             outputEditor.text = "Руководство пользователя"
@@ -336,7 +337,6 @@ ApplicationWindow {
                 }
             }
         }
-
         TextArea {
             id: sourceEditor
             Layout.fillWidth: true
@@ -345,11 +345,11 @@ ApplicationWindow {
             wrapMode: TextEdit.NoWrap
             onTextChanged: {
                 hasUnsavedChanges = true
-                outputEditor.text = scanner.scan(text)
+                outputEditor.text = lexer.scan(text)
             }
             Component.onCompleted: {
                 hasUnsavedChanges = false
-                outputEditor.text = scanner.scan(text)
+                outputEditor.text = lexer.scan(text)
             }
         }
 

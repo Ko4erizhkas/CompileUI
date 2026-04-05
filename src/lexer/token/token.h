@@ -1,13 +1,25 @@
+#pragma once
 #include <QString>
-enum class TokenType {
-    Type,
-    Id,
+enum class TokenType
+{
+	Unknown,
 
-    Unknown
+	Id,
+	Type,
+
+	LParen,		// '('
+	RParen,		// ')'
+	Comma,		// ','
+	Semicolon,	// ';'
+	Space		// ' '
 };
 struct Token
 {
-    TokenType token;
-    int line;
-    int column
+	TokenType type;
+	QString lexem;
+	int line;
+	int letterPos;
+
+	Token(TokenType t, const QString& l, int li, int ltr) :
+		type(t), lexem(l), line(li), letterPos(ltr) {}
 };

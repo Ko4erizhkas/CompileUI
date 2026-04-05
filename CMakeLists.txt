@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(CompileUIQt LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 6.10.2 REQUIRED COMPONENTS Quick)
@@ -12,14 +12,12 @@ set(QT_QML_NO_CACHEGEN TRUE)
 
 qt_add_executable(CompileUIQt
     src/main.cpp
-    src/functionprototypescanner.cpp
-    src/functionprototypescanner.h
     src/textfilestorage.cpp
     src/textfilestorage.h
     src/lexer/lexser.cpp
     src/lexer/lexser.h
-    src/lexer/token/token.cpp
     src/lexer/token/token.h
+    src/lexer/token/errorToken/errorToken.h
 )
 
 qt_add_qml_module(CompileUIQt
@@ -41,10 +39,15 @@ qt_add_qml_module(CompileUIQt
         resources/icons/UserInfoIcon.png
 )
 
-set_target_properties(CompileUIQt PROPERTIES
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set_target_properties(CompileUIQt PROPERTIES
+        WIN32_EXECUTABLE FALSE
+    )
+else()
+    set_target_properties(CompileUIQt PROPERTIES
+        WIN32_EXECUTABLE TRUE
+    )
+endif()
 
 target_link_libraries(CompileUIQt
     PRIVATE Qt6::Quick
