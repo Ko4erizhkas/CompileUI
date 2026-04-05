@@ -104,14 +104,19 @@ QString Lexer::scan(const QString& text)
 		}
 		pos++;
 	}
-	for (auto& t : tokens)
+	/*for (auto& t : tokens)
 	{
 		result += "Line: " + QString::number(t.line) + QChar(' ') + "Letter: " + QString::number(t.letterPos) + QChar(' ');
         result += "Lexeme: " + t.lexem + QChar('\n');
+	}*/
+	if (errors.empty())
+	{
+		result += "Errors not founds :)";
 	}
 	for (auto& e : errors)
 	{
 		result += "Error at: " + QString::number(e.line) + QChar(':') + QString::number(e.letterPos) + QChar(' ')+ e.errorMessage + QChar('\n');
+		
 	}
     return result;
 }
