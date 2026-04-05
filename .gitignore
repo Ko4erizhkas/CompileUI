@@ -363,6 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 build-static-release/
+build-static/
 build-static-debug/
 build/
 tests/
