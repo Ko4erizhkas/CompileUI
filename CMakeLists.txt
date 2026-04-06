@@ -4,7 +4,7 @@ project(CompileUIQt LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.10.2 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.10.2 REQUIRED COMPONENTS Quick Core)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
@@ -18,6 +18,9 @@ qt_add_executable(CompileUIQt
     src/lexer/lexser.h
     src/lexer/token/token.h
     src/lexer/token/errorToken/errorToken.h
+
+    src/models/lexerTableModel.cpp
+    src/models/lexerTableModel.h
 )
 
 qt_add_qml_module(CompileUIQt
@@ -50,7 +53,7 @@ else()
 endif()
 
 target_link_libraries(CompileUIQt
-    PRIVATE Qt6::Quick
+    PRIVATE Qt6::Quick Qt6::Core
 )
 
 install(TARGETS CompileUIQt
