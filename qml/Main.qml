@@ -4,8 +4,10 @@ import QtQuick.Controls
 import QtQuick.Controls.Universal
 import QtQuick.Layouts
 import QtQuick.Dialogs
+
 import CompileUI 1.0
 import Lexer 1.0
+import TokenTableModel 1.0
 
 ApplicationWindow {
     id: root
@@ -337,29 +339,39 @@ ApplicationWindow {
                 }
             }
         }
-        TextArea {
-            id: sourceEditor
-            Layout.fillWidth: true
-            Layout.preferredHeight: 160
-            placeholderText: "Введите прототип функции C++ (например: int sum(int a, int b);)"
-            wrapMode: TextEdit.NoWrap
-            onTextChanged: {
-                hasUnsavedChanges = true
-                outputEditor.text = lexer.scan(text)
-            }
-            Component.onCompleted: {
-                hasUnsavedChanges = false
-                outputEditor.text = lexer.scan(text)
-            }
-        }
+        SplitView {
 
-        TextArea {
-            id: outputEditor
+            orientation: Qt.Vertical
             Layout.fillWidth: true
             Layout.fillHeight: true
-            readOnly: true
-            placeholderText: "Ошибки сканера"
-            wrapMode: TextEdit.Wrap
+
+            ScrollView
+            {
+                SplitView.fillHeight: true
+                TextArea {
+                    id: sourceEditor
+                    placeholderText: "Введите прототип функции C++ (например: int sum(int a, int b);)"
+                    wrapMode: TextEdit.NoWrap
+                    onTextChanged: {
+                        hasUnsavedChanges = true
+                        outputEditor.text = lexer.scan(text)
+                    }
+                    Component.onCompleted: {
+                        hasUnsavedChanges = false
+                        outputEditor.text = lexer.scan(text)
+                    }
+                }
+            }
+            ScrollView
+            {
+                SplitView.fillHeight: true
+                TextArea {
+                    id: outputEditor
+                    readOnly: true
+                    placeholderText: "Ошибки сканера"
+                    wrapMode: TextEdit.Wrap
+                }
+            }
         }
     }
 }

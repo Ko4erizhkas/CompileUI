@@ -19,8 +19,12 @@ qt_add_executable(CompileUIQt
     src/lexer/token/token.h
     src/lexer/token/errorToken/errorToken.h
 
-    src/models/lexerTableModel.cpp
-    src/models/lexerTableModel.h
+    #src/models/lexerTableModel/lexerTableModel.cpp
+    #src/models/lexerTableModel/lexerTableModel.h
+    src/models/tokenTableModel/tokenTableModel.cpp
+    src/models/tokenTableModel/tokenTableModel.h
+    src/models/errorTokenTableModel/errorTokenTableModel.cpp
+    src/models/errorTokenTableModel/errorTokenTableModel.h
 )
 
 qt_add_qml_module(CompileUIQt

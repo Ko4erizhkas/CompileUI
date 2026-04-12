@@ -18,8 +18,8 @@ bool Lexer::isType(const QString& word)
 
 QString Lexer::scan(const QString& text)
 {
-	std::vector<Token> tokens;
-	std::vector<ErrorToken> errors;
+	QVector<Token> tokens;
+	QVector<ErrorToken> errors;
 
     QString result = "";
 	int pos = 0;
@@ -104,11 +104,10 @@ QString Lexer::scan(const QString& text)
 		}
 		pos++;
 	}
-	/*for (auto& t : tokens)
-	{
-		result += "Line: " + QString::number(t.line) + QChar(' ') + "Letter: " + QString::number(t.letterPos) + QChar(' ');
-        result += "Lexeme: " + t.lexem + QChar('\n');
-	}*/
+
+
+	emit tokensReady(tokens);
+
 	if (errors.empty())
 	{
 		result += "Errors not founds :)";
@@ -118,13 +117,16 @@ QString Lexer::scan(const QString& text)
 		result += "Error at: " + QString::number(e.line) + QChar(':') + QString::number(e.letterPos) + QChar(' ')+ e.errorMessage + QChar('\n');
 		
 	}
-    return result;
+
+	
+    
+	return result;
 }
 
-QPair<std::vector<Token>, std::vector<ErrorToken>> Lexer::scanReturns(const QString& text)
+QPair<QVector<Token>, QVector<ErrorToken>> Lexer::scanReturns(const QString& text)
 {
-	std::vector<Token> tokens;
-	std::vector<ErrorToken> errors;
+	QVector<Token> tokens;
+	QVector<ErrorToken> errors;
 
     QString result = "";
 	int pos = 0;

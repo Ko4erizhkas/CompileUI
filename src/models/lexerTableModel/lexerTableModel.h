@@ -3,6 +3,11 @@
 #include <QObject>
 #include <QString>
 #include <QVariant>
+#include <QPair>
+#include <vector>
+
+#include "src/lexer/lexser.h"
+
 class LexerAbstractTableModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -11,4 +16,6 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+private: 
+    QPair<std::vector<Token>, std::vector<ErrorToken>> data_;
 };

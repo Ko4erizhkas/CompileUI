@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QHash>
 #include <QPair>
-#include <vector>
+#include <QVector>
 
 #include "src/lexer/token/errorToken/errorToken.h"
 
@@ -14,7 +14,10 @@ public:
 	explicit Lexer(QObject *parent = nullptr);
 	Q_INVOKABLE QString scan(const QString& text);
 
-	QPair<std::vector<Token>, std::vector<ErrorToken>> scanReturns(const QString& text);
+	QPair<QVector<Token>, QVector<ErrorToken>> scanReturns(const QString& text);
+signals:
+	void tokensReady(const QVector<Token>& tokens);
+
 private:
 	bool isLetter(QChar c);
 	bool isType(const QString& word);
