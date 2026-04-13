@@ -10,7 +10,7 @@ int TokenTableModel::rowCount(const QModelIndex& parent) const
 int TokenTableModel::columnCount(const QModelIndex& parent) const
 {
     if (parent.isValid()) return 0;
-    return 3;
+    return 4;
 }
 
 QVariant TokenTableModel::data(const QModelIndex& index, int role) const 
@@ -23,10 +23,10 @@ QVariant TokenTableModel::data(const QModelIndex& index, int role) const
     {
         switch(index.column())
         {
-            case Qt::UserRole + 1: return token.line;
-            case Qt::UserRole + 2: return token.letterPos;
-            case Qt::UserRole + 3: return token.lexem;
-//            case Qt::UserRole + 4: return TokenTypeToString(token.type);
+            case 0: return token.line;
+            case 1: return token.letterPos;
+            case 2: return token.lexem;
+            case 3: return TokenTypeToString(token.type);
             default: return {};
         }
     }
@@ -40,10 +40,10 @@ QVariant TokenTableModel::headerData(int section, Qt::Orientation orientation, i
     {
         switch(section)
         {
-            case 0: return "Line";
-            case 1: return "LetterPos";
-            case 2: return "Lexeme";
-//            case 3: return "Token_type";
+            case 0: return "Линия";
+            case 1: return "Позиция";
+            case 2: return "Лексема";
+            case 3: return "Тип токена";
         }
     }
     return QVariant();
@@ -51,10 +51,11 @@ QVariant TokenTableModel::headerData(int section, Qt::Orientation orientation, i
 QHash<int, QByteArray> TokenTableModel::roleNames() const
 {
     return {
-        {Qt::UserRole + 1, "Line"},
-        {Qt::UserRole + 2, "LetterPos"},
-        {Qt::UserRole + 3, "Lexeme"},
-//        {Qt::UserRole + 4, "Token_Type"}
+        {Qt::DisplayRole, "display"},
+        {Qt::UserRole + 1, "Линия"},
+        {Qt::UserRole + 2, "Позиция"},
+        {Qt::UserRole + 3, "Лексема"},
+        {Qt::UserRole + 4, "Тип токена"}
     };
 }
 void TokenTableModel::updateTokens(const QVector<Token>& tokens) 

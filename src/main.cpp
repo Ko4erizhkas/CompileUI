@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <qqml.h>
 
 #include "src/lexer/lexser.h"
@@ -11,14 +12,17 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     // QML types
-    qmlRegisterType<Lexer>("Lexer", 1, 0, "Lexer");
-    qmlRegisterType<TokenTableModel>("TokenTableModel", 1, 0, "TokenTableModel");
     qmlRegisterType<TextFileStorage>("CompileUI", 1, 0, "TextFileStorage");
 
     QQmlApplicationEngine engine;
+    Lexer lexer;
+    TokenTableModel tokenTableModel;
 
-    QObject::connect(
-        &engine,
+    QObject::connect(&lexer, &Lexer::tokensReady, &tokenTableModel, &TokenTableModel::updateTokens);
+
+    engine.rootContext()->setContextProperty("lexer", &lexer);
+    engine.rootContext()->setContextProperty("tokenTableModel", &tokenTableModel);
+    QObject::connect(&engine,
         &QQmlApplicationEngine::objectCreationFailed,
         &app,
         [] { QCoreApplication::exit(-1); },

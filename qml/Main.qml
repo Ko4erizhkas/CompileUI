@@ -6,13 +6,11 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 
 import CompileUI 1.0
-import Lexer 1.0
-import TokenTableModel 1.0
 
 ApplicationWindow {
     id: root
-    width: 800
-    height: 500
+    width: 1680
+    height: 1080
     visible: true
     title: currentFileName.length > 0 ? "Compiler - " + currentFileName : "Compiler"
 
@@ -27,9 +25,6 @@ ApplicationWindow {
 
     TextFileStorage {
         id: fileStorage
-    }
-    Lexer {
-        id: lexer
     }
     function finalExit()
     {
@@ -171,7 +166,7 @@ ApplicationWindow {
             id: openFileDialog
             title: "Открыть файл"
             fileMode: FileDialog.OpenFile
-            nameFilters: ["Text file (*.txt)", "C++ file (*.cpp *.h)", "All files (*)"]
+            nameFilters: [ "All files (*)", "Text file (*.txt)", "C++ file (*.cpp *.h)"]
             onAccepted: root.openSelectedFile(selectedFile)
         }
         FileDialog {
@@ -293,7 +288,13 @@ ApplicationWindow {
             Action { text: qsTr("Список литературы") }
             Action { text: qsTr("Исходный код программы") }
         }
-        Menu { title: "Пуск" }
+        Menu { 
+            title: "Пуск"
+            Action {
+                text: "Запуск лексера"
+                onTriggered: outputEditor.text = lexer.scan(sourceEditor.text)
+            }
+        }
         Menu {
             title: "Справка"
             Action { text: qsTr("Вызов справки") }
@@ -341,35 +342,71 @@ ApplicationWindow {
         }
         SplitView {
 
-            orientation: Qt.Vertical
             Layout.fillWidth: true
             Layout.fillHeight: true
-
+            orientation: Qt.Horizontal
             ScrollView
             {
                 SplitView.fillHeight: true
+                SplitView.preferredHeight: root * 0.4
                 TextArea {
                     id: sourceEditor
                     placeholderText: "Введите прототип функции C++ (например: int sum(int a, int b);)"
                     wrapMode: TextEdit.NoWrap
                     onTextChanged: {
                         hasUnsavedChanges = true
-                        outputEditor.text = lexer.scan(text)
                     }
                     Component.onCompleted: {
                         hasUnsavedChanges = false
-                        outputEditor.text = lexer.scan(text)
                     }
                 }
+
             }
             ScrollView
             {
-                SplitView.fillHeight: true
+                SplitView.preferredWidth: parent.width * 0.3
                 TextArea {
                     id: outputEditor
                     readOnly: true
                     placeholderText: "Ошибки сканера"
                     wrapMode: TextEdit.Wrap
+                }
+            }
+            Frame {
+                SplitView.fillWidth: true
+                SplitView.preferredWidth: root * 0.45
+                ColumnLayout {
+                    anchors.fill: parent
+                    Label {
+                        text: "Таблица токенов"
+                    }
+                    HorizontalHeaderView {
+                        syncView: tokenTableView
+                        model: ["Линия", "Позиция", "Лексема", "Тип токена"]
+                        Layout.fillWidth: true
+                    }
+                    TableView {
+                        id: tokenTableView
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        model: tokenTableModel
+                        clip: true
+                        columnSpacing: 1
+                        rowSpacing: 1
+                        delegate: Rectangle {
+                            implicitWidth: 110
+                            implicitHeight: 20
+                            color: row % 2 === 0 ? "#ffffff" : "#f5f5f5"
+                            border.color: "#d0d0d0"
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 8
+                                text: display ?? ""
+                                color: "#202020"
+                            }
+                        }
+                    }
                 }
             }
         }
