@@ -26,7 +26,8 @@
 
 **Диграмма состояний**
 letter - латинская буква, digit - цифра от 0 до 9
-![](./resources/src_for_readme/Диаграмма.png)
+
+![](./resources/src_for_readme/lab1/Diargamm.png)
 
 **Тестовые примеры(сканер)**
 
