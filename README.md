@@ -38,7 +38,7 @@
 8. <PARAM_TAIL> → ',' <AFTER_COMMA>
 9. <PARAM_TAIL> → ')' <AFTER_RPAREN>
 10. <AFTER_COMMA> → type ' ' <PARAM_AFTER_TYPE>
-11. <AFTER_RPAREN> → ';' <SEMICOLON>
+11. <AFTER_RPAREN> → ';'
 
 12. id → letter <ID_TAIL>
 13. <ID_TAIL> → letter <ID_TAIL> | digit <ID_TAIL> | '_' <ID_TAIL> | e
@@ -47,7 +47,7 @@ Z = <TYPE_FUNC>
 
 type = 'void' | 'int' | 'short' | 'float' | 'double'
 Vt = {a, b, ..., z, A, B, ..., Z, 0, 1, ..., 9, (, ), ;, _}
-Vn = {<TYPE_FUNC>, <AFTER_TYPE>, <AFTER_ID>, <PARAMS>, <AFTER_RPAREN>, <PARAM_AFTER_TYPE>, <PARAM_TAIL>, <AFTER_COMMA>, <SEMICOLON>, <ID_TAIL>, <SPACE_AFTER_FUNC_TYPE>}
+Vn = {<TYPE_FUNC>, <AFTER_TYPE>, <AFTER_ID>, <PARAMS>, <AFTER_RPAREN>, <PARAM_AFTER_TYPE>, <PARAM_TAIL>, <AFTER_COMMA>, <ID_TAIL>, <SPACE_AFTER_FUNC_TYPE>}
 ```
 
 Классификация грамматики по Хомскому: Автоматная грамматика
