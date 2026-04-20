@@ -1,0 +1,63 @@
+Грамматика для прототипов функции С\С++ ( Пример: void f(int dada,float net); )
+
+Разработанная грамматика
+G[<F>]:
+Инерации грамматики - 1
+1. <TYPE_FUNC> -> type ' '<SPACE_ID_FUNC>
+2. <SPACE_ID_FUNC> -> id <ID_FUNC>
+2. <ID_FUNC> -> id '(' <LPAREN>
+3. <LPAREN> -> <START_PARAMS>
+4. <START_PARAMS> -> type id <END_PARAMS>
+5. <END_PARAMS> -> ')' <RPAREN>
+6. <RPAREN> -> <SEMICOLON>
+7. <SEMICOLON> -> ';'
+
+8. id -> letter <ID_TAIL>
+9. <ID_TAIL> -> letter <ID_TAIL> | digit <ID_TAIL> | '_' <ID_TAIL> | e
+
+Z = <TYPE_FUNC>
+
+type = 'void' | 'int' | 'short' | 'float' | 'double'
+Vt = {a, b, ..., z, A, B, ..., Z, 0, 1, ..., 9, (, ), ;, _}
+Vn = {<TYPE_FUNC>, <ID_FUNC>, <ID_TAIL>, <ID_LETTER>, <LPAREN>, <RPAREN>, <START_PARAMS>, <END_PARAMS>, <SEMICOLON>}
+
+
+Итерация грамматики - 2 
+1. <TYPE_FUNC> -> type ' ' <SPACE_AFTER_TYPE>
+2. <SPACE_AFTER_TYPE> -> id <ID_FUNC>
+3. <ID_FUNC> -> '(' <LPAREN>
+4. <LPAREN> -> <PARAMS>
+5. <PARAMS> -> ')' <RPAREN> | type <PARAMS_AFTER_TYPE>
+6. <PARAMS_AFTER_LPAREN> -> <PARAMS_AFTER_TYPE> | id <PARAM_TAIL>
+7. <PARAM_TAIL> -> ',' <COMMA> | ')' <RPAREN>
+8. <COMMA> -> type <PARAMS_AFTER_TYPE>
+9. <RPAREN> -> ';'
+
+Z = <TYPE_FUNC>
+
+type = 'void' | 'int' | 'short' | 'float' | 'double'
+Vt = {a, b, ..., z, A, B, ..., Z, 0, 1, ..., 9, (, ), ;, _}
+Vn = {<TYPE_FUNC>, <ID_FUNC>, <ID_TAIL>, <ID_LETTER>, <LPAREN>, <RPAREN>, <START_PARAMS>, <END_PARAMS>, <SEMICOLON>}
+
+Итоговая грамматика
+Итерация грамматики - 3
+1. <TYPE_FUNC> → type <AFTER_TYPE>
+2. <AFTER_TYPE> -> ' ' <SPACE_AFTER_FUNC_TYPE>
+3. <SPACE_AFTER_FUNC_TYPE> → id <AFTER_ID>
+4. <AFTER_ID> → '(' <PARAMS>
+5. <PARAMS> → ')' <AFTER_RPAREN>
+6. <PARAMS> → type ' ' <PARAM_AFTER_TYPE>
+7. <PARAM_AFTER_TYPE> → id <PARAM_TAIL>
+8. <PARAM_TAIL> → ',' <AFTER_COMMA>
+9. <PARAM_TAIL> → ')' <AFTER_RPAREN>
+10. <AFTER_COMMA> → type ' ' <PARAM_AFTER_TYPE>
+11. <AFTER_RPAREN> → ';' <SEMICOLON>
+
+12. id → letter <ID_TAIL>
+13. <ID_TAIL> → letter <ID_TAIL> | digit <ID_TAIL> | '_' <ID_TAIL> | e
+
+Z = <TYPE_FUNC>
+
+type = 'void' | 'int' | 'short' | 'float' | 'double'
+Vt = {a, b, ..., z, A, B, ..., Z, 0, 1, ..., 9, (, ), ;, _}
+Vn = {<TYPE_FUNC>, <AFTER_TYPE>, <AFTER_ID>, <PARAMS>, <AFTER_RPAREN>, <PARAM_AFTER_TYPE>, <PARAM_TAIL>, <AFTER_COMMA>, <SEMICOLON>, <ID_TAIL>, <SPACE_AFTER_FUNC_TYPE>}
