@@ -1,17 +1,18 @@
 #pragma once
 #include <QString>
-enum class TokenType
+enum class TokenType : int
 {
-	Unknown,
+	Error = -1,
+	Unknown = 0,
 
-	Id,
-	Type,
+	Id = 1,
+	Type = 2,
 
-	LParen,		// '('
-	RParen,		// ')'
-	Comma,		// ','
-	Semicolon,	// ';'
-	Space		// ' '
+	LParen = 3,		// '('
+	RParen = 4,		// ')'
+	Comma = 5,		// ','
+	Semicolon = 6,	// ';'
+	Space = 7		// ' '
 };
 struct Token
 {

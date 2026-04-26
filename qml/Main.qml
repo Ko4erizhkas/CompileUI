@@ -124,7 +124,8 @@ ApplicationWindow {
             sourceEditor.redo()
             break
         case "analyze":
-            outputEditor.text = lexer.scan(sourceEditor.text)
+            //outputEditor.text = lexer.scan(sourceEditor.text)
+            outputEditor.text = parser.parse(sourceEditor.text)
             break
         case "userInfo":
             outputEditor.text = "Руководство пользователя"
@@ -292,7 +293,8 @@ ApplicationWindow {
             title: "Пуск"
             Action {
                 text: "Запуск лексера"
-                onTriggered: outputEditor.text = lexer.scan(sourceEditor.text)
+                //onTriggered: outputEditor.text = lexer.scan(sourceEditor.text)
+                onTriggered: outputEditor.text = parser.parse(sourceEditor.text)
             }
         }
         Menu {

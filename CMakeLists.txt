@@ -24,6 +24,7 @@ qt_add_executable(CompileUIQt
 
     src/parser/parser.cpp
     src/parser/parser.h
+    src/parser/errorParser/errorParser.h
 )
 
 qt_add_qml_module(CompileUIQt
