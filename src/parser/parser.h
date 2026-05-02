@@ -13,12 +13,9 @@ enum class States
     ExpectedIdFunc,
     ExpectedLParen,
     ExpectedStartParams,
-    ExpectedTypeOrRParen,
     ExpectedType,
     ExpectedComma,
     ExpectedId,
-    ExpectedParamTail,
-    ExpectedRParen,
     ExpectedSemicolon,
     Accepted
 };
