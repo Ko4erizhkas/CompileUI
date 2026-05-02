@@ -22,6 +22,9 @@ qt_add_executable(CompileUIQt
     src/models/tokenTableModel/tokenTableModel.cpp
     src/models/tokenTableModel/tokenTableModel.h
 
+    src/models/parserTableModel/parserTableModel.cpp
+    src/models/parserTableModel/parserTableModel.h
+
     src/parser/parser.cpp
     src/parser/parser.h
     src/parser/errorParser/errorParser.h

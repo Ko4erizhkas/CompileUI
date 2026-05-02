@@ -6,6 +6,7 @@
 #include "src/lexer/lexser.h"
 #include "src/parser/parser.h"
 #include "src/models/tokenTableModel/tokenTableModel.h"
+#include "src/models/parserTableModel/parserTableModel.h"
 #include "textfilestorage.h"
 
 int main(int argc, char *argv[])
@@ -19,12 +20,15 @@ int main(int argc, char *argv[])
     Lexer lexer;
     Parser parser;
     TokenTableModel tokenTableModel;
+    ParserTableModel parserTableModel;
 
     QObject::connect(&lexer, &Lexer::tokensReady, &tokenTableModel, &TokenTableModel::updateTokens);
+    QObject::connect(&parser, &Parser::errorsReady, &parserTableModel, &ParserTableModel::updateErrors);
 
     engine.rootContext()->setContextProperty("lexer", &lexer);
     engine.rootContext()->setContextProperty("parser", &parser);
     engine.rootContext()->setContextProperty("tokenTableModel", &tokenTableModel);
+    engine.rootContext()->setContextProperty("parserTableModel", &parserTableModel);
     QObject::connect(&engine,
         &QQmlApplicationEngine::objectCreationFailed,
         &app,

@@ -75,7 +75,7 @@ QPair<QVector<Token>, QVector<ErrorToken>> Lexer::scanReturns(const QString& tex
 				else
 				{
 					errors.emplace_back(TokenType::Unknown, "Invaild type: " + word, line, startLetter);
-					
+					tokens.emplace_back(TokenType::Unknown, word, line, startLetter);
 				}
 				expectedType = false;
 			}

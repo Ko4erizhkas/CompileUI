@@ -1,31 +1,26 @@
 #include "src/parser/parser.h"
 #include <QDebug>
-#include <initializer_list>
+
 Parser::Parser(QObject* parent) : QObject{parent} {}
-
-// Parser::Parser(QObject* parent, const QVector<Token>& tokens) : 
-//                 QObject{parent}, m_tokens(tokens) {}
-
 
 QString Parser::parse(const QString& text)
 {
     states.clear();
-
     createStates(text);
-    QString res = "";
-    qDebug() << "Total errors:" << state_errors.count();
+
+    emit errorsReady(state_errors);
+
+    if (state_errors.isEmpty())
+        return "Ошибок нет :)";
+
+    QString res;
     for (const auto& e : state_errors)
     {
-        qDebug() 
-        << "--------Error--------\n"
-        << "line:" << e.line 
-        << " pos:" << e.letterPos << 
-        " state:" << e.states << 
-        " message:" << e.errorDesc;
+        res += "Ошибка в " + QString::number(e.line) + ":" +
+               QString::number(e.letterPos) + " - " + e.errorDesc + "\n";
     }
     return res;
 }
-
 
 void Parser::createStates(const QString& text)
 {
@@ -36,18 +31,16 @@ void Parser::createStates(const QString& text)
     int i = 0;
 
     state_errors.clear();
-    
-    auto ironsState = [&](int& idx, States state)
+
+    auto ironsState = [&](int& idx, States s)
     {
-        const auto& sign = signature[state];
+        const auto& sign = signature[s];
         while (idx < tokens.size())
         {
-            for (auto s : sign)
+            for (auto t : sign)
             {
-                if (tokens[idx].type == s)
-                {
+                if (tokens[idx].type == t)
                     return;
-                }
             }
             idx++;
         }
@@ -56,8 +49,7 @@ void Parser::createStates(const QString& text)
     while (i < tokens.size())
     {
         const Token& token = tokens[i];
-        if (i < 0 || i > tokens.size())
-            break;
+
         if (isSpace(token))
         {
             i++;
@@ -71,13 +63,13 @@ void Parser::createStates(const QString& text)
         {
             if (isType(token))
             {
-                addState(static_cast<int>(TokenType::Type), token);
+                addState(token);
                 state = States::ExpectedIdFunc;
                 i++;
             }
             else
             {
-                addError(token, "Expected function type");
+                addError(token, "Ожидался тип возвращаемого значения функции");
                 ironsState(i, state);
                 continue;
             }
@@ -88,13 +80,19 @@ void Parser::createStates(const QString& text)
         {
             if (isId(token))
             {
-                addState(static_cast<int>(TokenType::Id), token);
+                addState(token);
                 state = States::ExpectedLParen;
+                i++;
+            }
+            else if (isSemicolon(token))
+            {
+                addError(token, "Ожидалось имя функции");
+                state = States::ExpectedTypeFunc;
                 i++;
             }
             else
             {
-                addError(token, "Expected function name");
+                addError(token, "Ожидалось имя функции");
                 ironsState(i, state);
                 continue;
             }
@@ -105,13 +103,19 @@ void Parser::createStates(const QString& text)
         {
             if (isLParen(token))
             {
-                addState(static_cast<int>(TokenType::LParen), token);
+                addState(token);
                 state = States::ExpectedStartParams;
+                i++;
+            }
+            else if (isSemicolon(token))
+            {
+                addError(token, "Ожидался '('");
+                state = States::ExpectedTypeFunc;
                 i++;
             }
             else
             {
-                addError(token, "Expected '('");
+                addError(token, "Ожидался '('");
                 ironsState(i, state);
                 continue;
             }
@@ -122,19 +126,25 @@ void Parser::createStates(const QString& text)
         {
             if (isType(token))
             {
-                addState(static_cast<int>(TokenType::Type), token);
+                addState(token);
                 state = States::ExpectedId;
                 i++;
             }
             else if (isRParen(token))
             {
-                addState(static_cast<int>(TokenType::RParen), token);
+                addState(token);
                 state = States::ExpectedSemicolon;
+                i++;
+            }
+            else if (isSemicolon(token))
+            {
+                addError(token, "Ожидался тип параметра или ')'");
+                state = States::ExpectedTypeFunc;
                 i++;
             }
             else
             {
-                addError(token, "Expected type or ')'");
+                addError(token, "Ожидался тип параметра или ')'");
                 i++;
             }
             break;
@@ -144,13 +154,60 @@ void Parser::createStates(const QString& text)
         {
             if (isId(token))
             {
-                addState(static_cast<int>(TokenType::Id), token);
+                addState(token);
+                state = States::ExpectedComma;
+                i++;
+            }
+            else if (isComma(token))
+            {
+                addError(token, "Ожидалось имя параметра");
                 state = States::ExpectedType;
+                i++;
+            }
+            else if (isRParen(token))
+            {
+                addError(token, "Ожидалось имя параметра");
+                state = States::ExpectedSemicolon;
+                i++;
+            }
+            else if (isSemicolon(token))
+            {
+                addError(token, "Ожидалось имя параметра");
+                state = States::ExpectedTypeFunc;
                 i++;
             }
             else
             {
-                addError(token, "Expected parameter name");
+                addError(token, "Ожидалось имя параметра");
+                ironsState(i, state);
+                continue;
+            }
+            break;
+        }
+
+        case States::ExpectedComma:
+        {
+            if (isComma(token))
+            {
+                addState(token);
+                state = States::ExpectedType;
+                i++;
+            }
+            else if (isRParen(token))
+            {
+                addState(token);
+                state = States::ExpectedSemicolon;
+                i++;
+            }
+            else if (isSemicolon(token))
+            {
+                addError(token, "Ожидался ',' или ')'");
+                state = States::ExpectedTypeFunc;
+                i++;
+            }
+            else
+            {
+                addError(token, "Ожидался ',' или ')'");
                 ironsState(i, state);
                 continue;
             }
@@ -161,25 +218,19 @@ void Parser::createStates(const QString& text)
         {
             if (isType(token))
             {
-                addState(static_cast<int>(TokenType::Type), token);
+                addState(token);
                 state = States::ExpectedId;
                 i++;
             }
-            else if (isComma(token))
+            else if (isSemicolon(token))
             {
-                addState(static_cast<int>(TokenType::Comma), token);
-                state = States::ExpectedType;
-                i++;
-            }
-            else if (isRParen(token))
-            {
-                addState(static_cast<int>(TokenType::RParen), token);
-                state = States::ExpectedSemicolon;
+                addError(token, "Ожидался тип параметра");
+                state = States::ExpectedTypeFunc;
                 i++;
             }
             else
             {
-                addError(token, "Expected type or ',' or ')'");
+                addError(token, "Ожидался тип параметра");
                 ironsState(i, state);
                 continue;
             }
@@ -190,13 +241,13 @@ void Parser::createStates(const QString& text)
         {
             if (isSemicolon(token))
             {
-                addState(static_cast<int>(TokenType::Semicolon), token);
+                addState(token);
                 state = States::Accepted;
                 i++;
             }
             else
             {
-                addError(token, "Expected ';'");
+                addError(token, "Ожидался ';'");
                 i++;
             }
             break;
@@ -210,18 +261,20 @@ void Parser::createStates(const QString& text)
 
         default:
         {
-            addError(token, "Unknown state");
+            addError(token, "Неизвестное состояние");
             i++;
             break;
         }
         }
     }
+
+    if (state == States::ExpectedSemicolon && !tokens.isEmpty())
+    {
+        const Token& last = tokens.last();
+        Token eofToken(TokenType::End_of_token, "", last.line, last.letterPos + 1);
+        addError(eofToken, "Ожидался ';'");
+    }
 }
-
-
-
-
-
 
 void Parser::addError(const Token& token, QString message)
 {
@@ -230,7 +283,8 @@ void Parser::addError(const Token& token, QString message)
         token.letterPos, static_cast<int>(token.type), message)
     );
 }
-void Parser::addState(int numState, const Token& token)
+
+void Parser::addState(const Token& token)
 {
     states.insert(static_cast<int>(token.type), token);
 }
@@ -243,23 +297,23 @@ bool Parser::isId(const Token& token) const
 {
     return token.type == TokenType::Id;
 }
-bool Parser::isSpace(const Token& token) const 
+bool Parser::isSpace(const Token& token) const
 {
     return token.type == TokenType::Space;
 }
-bool Parser::isSemicolon(const Token& token) const 
+bool Parser::isSemicolon(const Token& token) const
 {
     return token.type == TokenType::Semicolon;
 }
-bool Parser::isLParen(const Token& token) const 
+bool Parser::isLParen(const Token& token) const
 {
     return token.type == TokenType::LParen;
 }
 bool Parser::isRParen(const Token& token) const
 {
     return token.type == TokenType::RParen;
-} 
-bool Parser::isComma(const Token& token) const 
+}
+bool Parser::isComma(const Token& token) const
 {
     return token.type == TokenType::Comma;
 }

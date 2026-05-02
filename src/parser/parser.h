@@ -6,9 +6,10 @@
 #include "src/lexer/token/token.h"
 #include "src/lexer/lexser.h"
 #include "src/parser/errorParser/errorParser.h"
+
 enum class States
 {
-    ExpectedTypeFunc, 
+    ExpectedTypeFunc,
     ExpectedIdFunc,
     ExpectedLParen,
     ExpectedStartParams,
@@ -21,6 +22,7 @@ enum class States
     ExpectedSemicolon,
     Accepted
 };
+
 class Parser : public QObject
 {
     Q_OBJECT
@@ -28,12 +30,13 @@ public:
     explicit Parser(QObject* parent = nullptr);
     Q_INVOKABLE QString parse(const QString& text);
 
-private:
+signals:
+    void errorsReady(const QVector<ErrorParser>& errors);
 
+private:
     void createStates(const QString& text);
-    void ironsStates();
     void addError(const Token& token, QString message);
-    void addState(int numState, const Token& token);
+    void addState(const Token& token);
     QHash<int, Token> states;
     QVector<ErrorParser> state_errors;
     bool isType(const Token& token) const;
@@ -44,15 +47,15 @@ private:
     bool isSemicolon(const Token& token) const;
     bool isComma(const Token& token) const;
 
-    const QHash<States, QVector<TokenType>> signature = 
+    const QHash<States, QVector<TokenType>> signature =
     {
-        {States::ExpectedTypeFunc, {TokenType::Type}},
-        {States::ExpectedIdFunc, {TokenType::Id, TokenType::Semicolon}},
-        {States::ExpectedLParen, {TokenType::LParen, TokenType::Semicolon}},
+        {States::ExpectedTypeFunc,    {TokenType::Type}},
+        {States::ExpectedIdFunc,      {TokenType::Id, TokenType::Semicolon}},
+        {States::ExpectedLParen,      {TokenType::LParen, TokenType::Semicolon}},
         {States::ExpectedStartParams, {TokenType::Type, TokenType::RParen}},
-        {States::ExpectedId, {TokenType::Id, TokenType::Comma, TokenType::RParen}},
-        {States::ExpectedType, {TokenType::Type, TokenType::Comma, TokenType::RParen}},
-        {States::ExpectedComma, {TokenType::Comma, TokenType::RParen}},
-        {States::ExpectedSemicolon, {TokenType::Semicolon}}
+        {States::ExpectedId,          {TokenType::Id, TokenType::Comma, TokenType::RParen, TokenType::Semicolon}},
+        {States::ExpectedComma,       {TokenType::Comma, TokenType::RParen, TokenType::Semicolon}},
+        {States::ExpectedType,        {TokenType::Type, TokenType::Semicolon}},
+        {States::ExpectedSemicolon,   {TokenType::Semicolon}}
     };
 };
