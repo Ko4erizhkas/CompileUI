@@ -9,36 +9,50 @@
 enum class States
 {
     ExpectedTypeFunc, 
-    ExpectedSpaceAfterTypeFunc,
     ExpectedIdFunc,
     ExpectedLParen,
     ExpectedStartParams,
     ExpectedTypeOrRParen,
     ExpectedType,
-    ExpectedSpace,
+    ExpectedComma,
     ExpectedId,
     ExpectedParamTail,
     ExpectedRParen,
-    ExpectedSemicolon
+    ExpectedSemicolon,
+    Accepted
 };
 class Parser : public QObject
 {
     Q_OBJECT
 public:
     explicit Parser(QObject* parent = nullptr);
-    //explicit Parser(QObject* parent = nullptr, const QVector<Token>& tokens);
     Q_INVOKABLE QString parse(const QString& text);
+
 private:
 
     void createStates(const QString& text);
+    void ironsStates();
     void addError(const Token& token, QString message);
     void addState(int numState, const Token& token);
-    int m_pos = 0;
-    int m_state = 0;
     QHash<int, Token> states;
-    //QHash<int, ErrorParser> state_errors;
     QVector<ErrorParser> state_errors;
     bool isType(const Token& token) const;
     bool isId(const Token& token) const;
     bool isSpace(const Token& token) const;
+    bool isLParen(const Token& token) const;
+    bool isRParen(const Token& token) const;
+    bool isSemicolon(const Token& token) const;
+    bool isComma(const Token& token) const;
+
+    const QHash<States, QVector<TokenType>> signature = 
+    {
+        {States::ExpectedTypeFunc, {TokenType::Type}},
+        {States::ExpectedIdFunc, {TokenType::Id, TokenType::Semicolon}},
+        {States::ExpectedLParen, {TokenType::LParen, TokenType::Semicolon}},
+        {States::ExpectedStartParams, {TokenType::Type, TokenType::RParen}},
+        {States::ExpectedId, {TokenType::Id, TokenType::Comma, TokenType::RParen}},
+        {States::ExpectedType, {TokenType::Type, TokenType::Comma, TokenType::RParen}},
+        {States::ExpectedComma, {TokenType::Comma, TokenType::RParen}},
+        {States::ExpectedSemicolon, {TokenType::Semicolon}}
+    };
 };

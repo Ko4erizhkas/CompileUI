@@ -9,8 +9,8 @@ import CompileUI 1.0
 
 ApplicationWindow {
     id: root
-    width: 1680
-    height: 1080
+    width: 1000
+    height: 500
     visible: true
     title: currentFileName.length > 0 ? "Compiler - " + currentFileName : "Compiler"
 
@@ -293,7 +293,10 @@ ApplicationWindow {
             title: "Пуск"
             Action {
                 text: "Запуск лексера"
-                //onTriggered: outputEditor.text = lexer.scan(sourceEditor.text)
+                onTriggered: outputEditor.text = lexer.scan(sourceEditor.text)
+            }
+            Action {
+                text: "Запуски парсера"
                 onTriggered: outputEditor.text = parser.parse(sourceEditor.text)
             }
         }

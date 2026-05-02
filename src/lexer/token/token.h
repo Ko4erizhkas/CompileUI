@@ -4,6 +4,7 @@ enum class TokenType : int
 {
 	Error = -1,
 	Unknown = 0,
+	End_of_file = 9,
 
 	Id = 1,
 	Type = 2,
