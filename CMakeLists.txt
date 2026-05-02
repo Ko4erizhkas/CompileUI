@@ -11,6 +11,7 @@ qt_standard_project_setup(REQUIRES 6.10)
 set(QT_QML_NO_CACHEGEN TRUE)
 
 qt_add_executable(CompileUIQt
+    resources/icons/appIcon.rc
     src/main.cpp
     src/textfilestorage.cpp
     src/textfilestorage.h
@@ -47,6 +48,8 @@ qt_add_qml_module(CompileUIQt
         resources/icons/RightArrowIcon.png
         resources/icons/SaveIcon.png
         resources/icons/UserInfoIcon.png
+        resources/icons/iconApp.png
+        src/parser/grammatic.txt
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

@@ -116,6 +116,19 @@ QString TextFileStorage::loadFromPath(const QString &filePath)
     return result;
 }
 
+QString TextFileStorage::loadFromResource(const QString &resourcePath)
+{
+    QFile file(resourcePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        m_lastError = QStringLiteral("Не удалось открыть ресурс: %1").arg(resourcePath);
+        return QString();
+    }
+    QTextStream in(&file);
+    in.setEncoding(QStringConverter::Utf8);
+    m_lastError.clear();
+    return in.readAll();
+}
+
 QString TextFileStorage::localPathFromUrl(const QUrl &fileUrl) const
 {
     if (!fileUrl.isValid()) {

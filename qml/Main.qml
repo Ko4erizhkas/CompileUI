@@ -9,11 +9,10 @@ import CompileUI 1.0
 
 ApplicationWindow {
     id: root
-    width: 1000
-    height: 500
+    width: 1600
+    height: 900
     visible: true
     title: currentFileName.length > 0 ? "Compiler - " + currentFileName : "Compiler"
-
     Universal.theme: Universal.System
 
     property url currentFileUrl: ""
@@ -25,6 +24,7 @@ ApplicationWindow {
 
     property string tokenOutputText: ""
     property string parserOutputText: ""
+
 
     TextFileStorage {
         id: fileStorage
@@ -285,7 +285,12 @@ ApplicationWindow {
         Menu {
             title: "Текст"
             Action { text: qsTr("Постановка задачи") }
-            Action { text: qsTr("Грамматика") }
+            Action {
+                text: qsTr("Грамматика")
+                onTriggered: {
+                    outputEditor.text = fileStorage.loadFromResource(":/qt/qml/CompileUI/src/parser/grammatic.txt")
+                }
+            }
             Action { text: qsTr("Классификация грамматики") }
             Action { text: qsTr("Метод анализа") }
             Action { text: qsTr("Тестовый пример") }

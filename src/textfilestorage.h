@@ -18,6 +18,7 @@ public:
     Q_INVOKABLE QString loadFromFile(const QUrl &fileUrl);
     Q_INVOKABLE QUrl buildFileUrl(const QUrl &folderUrl, const QString &fileName) const;
     Q_INVOKABLE QString fileNameFromUrl(const QUrl &fileUrl) const;
+    Q_INVOKABLE QString loadFromResource(const QString &resourcePath);
 
 private:
     bool saveToPath(const QString &text, const QString &filePath);
