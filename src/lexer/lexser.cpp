@@ -120,6 +120,7 @@ QPair<QVector<Token>, QVector<ErrorToken>> Lexer::scanReturns(const QString& tex
 			break;
 		default:
 			errors.emplace_back(TokenType::Unknown, QString("Unknown token: ") + QString(1, text[pos]), line, letter);
+			tokens.emplace_back(TokenType::Unknown, QString(1, text[pos]), line, letter);
 			pos++;
 			letter++;
 			break;
