@@ -92,8 +92,8 @@ QPair<QVector<Token>, QVector<ErrorToken>> Lexer::scanReturns(const QString& tex
 				}
 				else
 				{
-					errors.emplace_back(TokenType::Unknown, "Недопустимый тип: " + word, line, startLetter);
-					tokens.emplace_back(TokenType::Unknown, word, line, startLetter);
+					errors.emplace_back(TokenType::Unknown, "Неподдерживаемый тип: " + word, line, startLetter);
+					tokens.emplace_back(TokenType::InvalidType, word, line, startLetter);
 				}
 				expectedType = false;
 			}

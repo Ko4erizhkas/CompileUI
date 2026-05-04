@@ -46,13 +46,13 @@ private:
 
     const QHash<States, QVector<TokenType>> signature =
     {
-        {States::ExpectedTypeFunc,    {TokenType::Type}},
+        {States::ExpectedTypeFunc,    {TokenType::Type, TokenType::InvalidType}},
         {States::ExpectedIdFunc,      {TokenType::Id, TokenType::Semicolon}},
         {States::ExpectedLParen,      {TokenType::LParen, TokenType::Semicolon}},
-        {States::ExpectedStartParams, {TokenType::Type, TokenType::Id, TokenType::RParen, TokenType::Semicolon}},
+        {States::ExpectedStartParams, {TokenType::Type, TokenType::InvalidType, TokenType::Id, TokenType::RParen, TokenType::Semicolon}},
         {States::ExpectedId,          {TokenType::Id, TokenType::Comma, TokenType::RParen, TokenType::Semicolon}},
         {States::ExpectedComma,       {TokenType::Comma, TokenType::RParen, TokenType::Semicolon}},
-        {States::ExpectedType,        {TokenType::Type, TokenType::Semicolon}},
+        {States::ExpectedType,        {TokenType::Type, TokenType::InvalidType, TokenType::Semicolon}},
         {States::ExpectedSemicolon,   {TokenType::Semicolon}}
     };
 };

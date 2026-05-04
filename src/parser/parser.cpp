@@ -66,6 +66,12 @@ void Parser::createStates(const QString& text)
                 state = States::ExpectedIdFunc;
                 i++;
             }
+            else if (token.type == TokenType::InvalidType)
+            {
+                addError(token, "Неподдерживаемый тип: " + token.lexem);
+                state = States::ExpectedIdFunc;
+                i++;
+            }
             else if (token.type == TokenType::Unknown)
             {
                 addError(token, "Ожидался тип возвращаемого значения функции");
@@ -146,6 +152,12 @@ void Parser::createStates(const QString& text)
             if (isType(token))
             {
                 addState(token);
+                state = States::ExpectedId;
+                i++;
+            }
+            else if (token.type == TokenType::InvalidType)
+            {
+                addError(token, "Неподдерживаемый тип: " + token.lexem);
                 state = States::ExpectedId;
                 i++;
             }
@@ -262,6 +274,12 @@ void Parser::createStates(const QString& text)
             if (isType(token))
             {
                 addState(token);
+                state = States::ExpectedId;
+                i++;
+            }
+            else if (token.type == TokenType::InvalidType)
+            {
+                addError(token, "Неподдерживаемый тип: " + token.lexem);
                 state = States::ExpectedId;
                 i++;
             }

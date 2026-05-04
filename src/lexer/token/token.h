@@ -13,7 +13,8 @@ enum class TokenType : int
 	RParen = 4,		// ')'
 	Comma = 5,		// ','
 	Semicolon = 6,	// ';'
-	Space = 7		// ' '
+	Space = 7,		// ' '
+	InvalidType = 8	// valid identifier but not in types list
 };
 struct Token
 {
