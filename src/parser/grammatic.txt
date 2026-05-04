@@ -1,6 +1,5 @@
 Грамматика для прототипов функции С\С++ ( Пример: void f(int dada,float net); )
-Итоговая грамматика
-Итерация грамматики - 3
+G[<Z>]:
 1. <TYPE_FUNC> → type <AFTER_TYPE>
 2. <AFTER_TYPE> -> ' ' <SPACE_AFTER_FUNC_TYPE>
 3. <SPACE_AFTER_FUNC_TYPE> → id <AFTER_ID>

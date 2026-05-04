@@ -1,5 +1,4 @@
 #include "src/parser/parser.h"
-#include <QDebug>
 
 Parser::Parser(QObject* parent) : QObject{parent} {}
 
