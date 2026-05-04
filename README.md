@@ -15,20 +15,20 @@ return a + b;
 ```
 
 1. Построение AST 
-[](./resources/src_for_readme/lab7/lab7_1.png)
+![](./resources/src_for_readme/lab7/lab7_1.png)
 
 2. Получение IR без оптимизаций
-[](./resources/src_for_readme/lab7/lab7_2.png)
+![](./resources/src_for_readme/lab7/lab7_2.png)
 
 3. Применение -O2
-[](./resources/src_for_readme/lab7/lab7_3.png)
+![](./resources/src_for_readme/lab7/lab7_3.png)
 
 4. Построение CFG для main и sum
-[](./resources/src_for_readme/lab7/lab7_4_1.png)
+![](./resources/src_for_readme/lab7/lab7_4_1.png)
 
 4.1 Полученные CFG
-[](./resources/src_for_readme/lab7/lab7_4_2.png)
-[](./resources/src_for_readme/lab7/lab7_4_3.png)
+![](./resources/src_for_readme/lab7/lab7_4_2.png)
+![](./resources/src_for_readme/lab7/lab7_4_3.png)
 ## Лабораторная работа 3. Разработка синтаксического анализатора (парсера)
 **Цель работы:** Изучить назначение и принципы работы синтаксического анализатора в структуре компилятора. Спроектировать грамматику, построить соответствующую схему метода анализа грамматики и выполнить программную реализацию парсера с нейтрализацией синтаксических ошибок методом Айронса. Интегрировать разработанный модуль в ранее созданный графический интерфейс языкового процессора.
 
