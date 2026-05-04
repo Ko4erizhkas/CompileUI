@@ -66,6 +66,12 @@ void Parser::createStates(const QString& text)
                 state = States::ExpectedIdFunc;
                 i++;
             }
+            else if (token.type == TokenType::Unknown)
+            {
+                addError(token, "Ожидался тип возвращаемого значения функции");
+                state = States::ExpectedIdFunc;
+                i++;
+            }
             else
             {
                 addError(token, "Ожидался тип возвращаемого значения функции");
@@ -83,6 +89,12 @@ void Parser::createStates(const QString& text)
                 state = States::ExpectedLParen;
                 i++;
             }
+            else if (token.type == TokenType::Unknown)
+            {
+                addError(token, "Недопустимый символ");
+                state = States::ExpectedLParen;
+                i++;
+            }
             else if (isSemicolon(token))
             {
                 addError(token, "Ожидалось имя функции");
@@ -93,7 +105,11 @@ void Parser::createStates(const QString& text)
             {
                 addError(token, "Ожидалось имя функции");
                 ironsState(i, state);
-                continue;
+                if (i < tokens.size() && isSemicolon(tokens[i]))
+                {
+                    state = States::ExpectedTypeFunc;
+                    i++;
+                }
             }
             break;
         }
@@ -116,7 +132,11 @@ void Parser::createStates(const QString& text)
             {
                 addError(token, "Ожидался '('");
                 ironsState(i, state);
-                continue;
+                if (i < tokens.size() && isSemicolon(tokens[i]))
+                {
+                    state = States::ExpectedTypeFunc;
+                    i++;
+                }
             }
             break;
         }
@@ -126,6 +146,12 @@ void Parser::createStates(const QString& text)
             if (isType(token))
             {
                 addState(token);
+                state = States::ExpectedId;
+                i++;
+            }
+            else if (token.type == TokenType::Unknown)
+            {
+                addError(token, "Недопустимый символ");
                 state = States::ExpectedId;
                 i++;
             }
@@ -157,6 +183,12 @@ void Parser::createStates(const QString& text)
                 state = States::ExpectedComma;
                 i++;
             }
+            else if (token.type == TokenType::Unknown)
+            {
+                addError(token, "Недопустимый символ");
+                state = States::ExpectedComma;
+                i++;
+            }
             else if (isComma(token))
             {
                 addError(token, "Ожидалось имя параметра");
@@ -179,7 +211,13 @@ void Parser::createStates(const QString& text)
             {
                 addError(token, "Ожидалось имя параметра");
                 ironsState(i, state);
-                continue;
+                if (i < tokens.size())
+                {
+                    const Token& sync = tokens[i];
+                    if (isComma(sync))          { state = States::ExpectedType;      i++; }
+                    else if (isRParen(sync))    { state = States::ExpectedSemicolon; i++; }
+                    else if (isSemicolon(sync)) { state = States::ExpectedTypeFunc;  i++; }
+                }
             }
             break;
         }
@@ -208,7 +246,13 @@ void Parser::createStates(const QString& text)
             {
                 addError(token, "Ожидался ',' или ')'");
                 ironsState(i, state);
-                continue;
+                if (i < tokens.size())
+                {
+                    const Token& sync = tokens[i];
+                    if (isComma(sync))          { state = States::ExpectedType;      i++; }
+                    else if (isRParen(sync))    { state = States::ExpectedSemicolon; i++; }
+                    else if (isSemicolon(sync)) { state = States::ExpectedTypeFunc;  i++; }
+                }
             }
             break;
         }
@@ -218,6 +262,12 @@ void Parser::createStates(const QString& text)
             if (isType(token))
             {
                 addState(token);
+                state = States::ExpectedId;
+                i++;
+            }
+            else if (token.type == TokenType::Unknown)
+            {
+                addError(token, "Недопустимый символ");
                 state = States::ExpectedId;
                 i++;
             }
@@ -231,7 +281,11 @@ void Parser::createStates(const QString& text)
             {
                 addError(token, "Ожидался тип параметра");
                 ironsState(i, state);
-                continue;
+                if (i < tokens.size() && isSemicolon(tokens[i]))
+                {
+                    state = States::ExpectedTypeFunc;
+                    i++;
+                }
             }
             break;
         }
@@ -247,7 +301,7 @@ void Parser::createStates(const QString& text)
             else
             {
                 addError(token, "Ожидался ';'");
-                i++;
+                state = States::ExpectedTypeFunc;
             }
             break;
         }
@@ -267,11 +321,42 @@ void Parser::createStates(const QString& text)
         }
     }
 
-    if (state == States::ExpectedSemicolon && !tokens.isEmpty())
+    if (!tokens.isEmpty() && state != States::Accepted && state != States::ExpectedTypeFunc)
     {
         const Token& last = tokens.last();
         Token eofToken(TokenType::End_of_token, "", last.line, last.letterPos + 1);
-        addError(eofToken, "Ожидался ';'");
+        switch (state)
+        {
+        case States::ExpectedIdFunc:
+            addError(eofToken, "Ожидалось имя функции");
+            addError(eofToken, "Ожидался ';'");
+            break;
+        case States::ExpectedLParen:
+            addError(eofToken, "Ожидался '('");
+            addError(eofToken, "Ожидался ';'");
+            break;
+        case States::ExpectedStartParams:
+            addError(eofToken, "Ожидался тип параметра или ')'");
+            addError(eofToken, "Ожидался ';'");
+            break;
+        case States::ExpectedId:
+            addError(eofToken, "Ожидалось имя параметра");
+            addError(eofToken, "Ожидался ';'");
+            break;
+        case States::ExpectedComma:
+            addError(eofToken, "Ожидался ',' или ')'");
+            addError(eofToken, "Ожидался ';'");
+            break;
+        case States::ExpectedType:
+            addError(eofToken, "Ожидался тип параметра");
+            addError(eofToken, "Ожидался ';'");
+            break;
+        case States::ExpectedSemicolon:
+            addError(eofToken, "Ожидался ';'");
+            break;
+        default:
+            break;
+        }
     }
 }
 

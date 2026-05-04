@@ -20,3 +20,5 @@ Z = <TYPE_FUNC>
 type = 'void' | 'int' | 'short' | 'float' | 'double'
 Vt = {a, b, ..., z, A, B, ..., Z, 0, 1, ..., 9, (, ), ;, _}
 Vn = {<TYPE_FUNC>, <AFTER_TYPE>, <AFTER_ID>, <PARAMS>, <AFTER_RPAREN>, <PARAM_AFTER_TYPE>, <PARAM_TAIL>, <AFTER_COMMA>, <SEMICOLON>, <ID_TAIL>, <SPACE_AFTER_FUNC_TYPE>}
+
+i$nt asdad(short net, )

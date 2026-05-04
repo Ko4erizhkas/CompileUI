@@ -57,16 +57,34 @@ QPair<QVector<Token>, QVector<ErrorToken>> Lexer::scanReturns(const QString& tex
 		{
 			int start = pos;
 			int startLetter = letter;
+			bool hasInvalidChars = false;
 
-			while (pos < text.size() && isId(text[pos]))
+			auto isWordDelimiter = [](QChar c) {
+				return c == '(' || c == ')' || c == ',' || c == ';'
+					|| c == ' ' || c == '\n' || c == '\t';
+			};
+
+			while (pos < text.size() && !isWordDelimiter(text[pos]))
 			{
+				if (!isId(text[pos]) && !text[pos].isDigit())
+				{
+					hasInvalidChars = true;
+					errors.emplace_back(TokenType::Unknown,
+						QString("Недопустимый символ '") + text[pos] + "'",
+						line, letter);
+				}
 				pos++;
 				letter++;
 			}
 
 			QString word = text.mid(start, pos - start);
-			
-			if (expectedType)
+
+			if (hasInvalidChars)
+			{
+				tokens.emplace_back(TokenType::Unknown, word, line, startLetter);
+				expectedType = false;
+			}
+			else if (expectedType)
 			{
 				if (isType(word))
 				{
@@ -74,7 +92,7 @@ QPair<QVector<Token>, QVector<ErrorToken>> Lexer::scanReturns(const QString& tex
 				}
 				else
 				{
-					errors.emplace_back(TokenType::Unknown, "Invaild type: " + word, line, startLetter);
+					errors.emplace_back(TokenType::Unknown, "Недопустимый тип: " + word, line, startLetter);
 					tokens.emplace_back(TokenType::Unknown, word, line, startLetter);
 				}
 				expectedType = false;
@@ -114,6 +132,7 @@ QPair<QVector<Token>, QVector<ErrorToken>> Lexer::scanReturns(const QString& tex
 		case '\n':
 			line++;
 			letter = 1;
+			expectedType = true;
 			break;
 		case '\t': 
 			letter++;	
