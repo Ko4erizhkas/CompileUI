@@ -128,6 +128,12 @@ void Parser::createStates(const QString& text)
                 state = States::ExpectedStartParams;
                 i++;
             }
+            else if (isRParen(token))
+            {
+                addError(token, "Ожидался '('");
+                state = States::ExpectedSemicolon;
+                i++;
+            }
             else if (isSemicolon(token))
             {
                 addError(token, "Ожидался '('");

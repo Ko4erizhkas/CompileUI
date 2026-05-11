@@ -56,6 +56,8 @@ qt_add_qml_module(CompileUIQt
         resources/src_for_text_menu/methodAnalyze.txt
         resources/src_for_text_menu/classification.txt
         resources/src_for_text_menu/literature.txt
+        resources/src_for_text_menu/examples.txt
+        resources/src_for_text_menu/problem.txt
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

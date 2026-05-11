@@ -284,7 +284,12 @@ ApplicationWindow {
         }
         Menu {
             title: "Текст"
-            Action { text: qsTr("Постановка задачи") }
+            Action { 
+                text: qsTr("Постановка задачи") 
+                onTriggered: {
+                    outputEditor.text = fileStorage.loadFromResource(":/qt/qml/CompileUI/resources/src_for_text_menu/problem.txt")
+                }
+            }
             Action {
                 text: qsTr("Грамматика")
                 onTriggered: {
@@ -304,7 +309,12 @@ ApplicationWindow {
                 
                 }            
             }
-            Action { text: qsTr("Тестовый пример") }
+            Action { 
+                text: qsTr("Тестовый пример") 
+                onTriggered: {
+                    outputEditor.text = fileStorage.loadFromResource(":/qt/qml/CompileUI/resources/src_for_text_menu/examples.txt")
+                }
+            }
             Action { 
                 text: qsTr("Список литературы") 
                 onTriggered: {

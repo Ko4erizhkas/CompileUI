@@ -1,0 +1,6 @@
+Тестовые примеры:
+
+1. int dada(int nono);
+2. void a(;
+3. decimal d&);
+4. short nono(int a, short b, float c);
