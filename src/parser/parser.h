@@ -31,11 +31,13 @@ signals:
     void errorsReady(const QVector<ErrorParser>& errors);
 
 private:
+
+    QHash<int, Token> states;
+    QVector<ErrorParser> state_errors;
+
     void createStates(const QString& text);
     void addError(const Token& token, QString message);
     void addState(const Token& token);
-    QHash<int, Token> states;
-    QVector<ErrorParser> state_errors;
     bool isType(const Token& token) const;
     bool isId(const Token& token) const;
     bool isSpace(const Token& token) const;
