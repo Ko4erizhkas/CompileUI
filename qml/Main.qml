@@ -9,8 +9,8 @@ import CompileUI 1.0
 
 ApplicationWindow {
     id: root
-    width: 1600
-    height: 900
+    width: 1280
+    height: 720
     visible: true
     title: currentFileName.length > 0 ? "Compiler - " + currentFileName : "Compiler"
     Universal.theme: Universal.System
@@ -288,14 +288,35 @@ ApplicationWindow {
             Action {
                 text: qsTr("Грамматика")
                 onTriggered: {
-                    outputEditor.text = fileStorage.loadFromResource(":/qt/qml/CompileUI/src/parser/grammatic.txt")
+                    outputEditor.text = fileStorage.loadFromResource(":/qt/qml/CompileUI/resources/src_for_text_menu/grammatic.txt")
                 }
             }
-            Action { text: qsTr("Классификация грамматики") }
-            Action { text: qsTr("Метод анализа") }
+            Action { 
+                text: qsTr("Классификация грамматики") 
+                onTriggered: {
+                    outputEditor.text = fileStorage.loadFromResource(":/qt/qml/CompileUI/resources/src_for_text_menu/classification.txt")
+                }                
+            }
+            Action {
+                text: qsTr("Метод анализа")
+                onTriggered: {
+                    outputEditor.text = fileStorage.loadFromResource(":/qt/qml/CompileUI/resources/src_for_text_menu/methodAnalyze.txt")
+                
+                }            
+            }
             Action { text: qsTr("Тестовый пример") }
-            Action { text: qsTr("Список литературы") }
-            Action { text: qsTr("Исходный код программы") }
+            Action { 
+                text: qsTr("Список литературы") 
+                onTriggered: {
+                    outputEditor.text = fileStorage.loadFromResource(":/qt/qml/CompileUI/resources/src_for_text_menu/literature.txt")
+                }                
+            }
+            Action { 
+                text: qsTr("Исходный код программы") 
+                onTriggered: {
+                    outputEditor.text = fileStorage.loadFromResource(":/qt/qml/CompileUI/resources/src_for_text_menu/sourceCode.txt")
+                } 
+            }
         }
         Menu { 
             title: "Пуск"
@@ -316,8 +337,18 @@ ApplicationWindow {
         }
         Menu {
             title: "Справка"
-            Action { text: qsTr("Вызов справки") }
-            Action { text: qsTr("О программе") }
+            Action { 
+                text: qsTr("Вызов справки") 
+                onTriggered: {
+                    outputEditor.text = fileStorage.loadFromResource(":/qt/qml/CompileUI/resources/src_for_text_menu/forUsers.txt")
+                }
+            }
+            Action {
+                text: qsTr("О программе")
+                onTriggered: {
+                    outputEditor.text = fileStorage.loadFromResource(":/qt/qml/CompileUI/resources/src_for_text_menu/aboutProgram.txt")
+                }
+            }
         }
     }
 

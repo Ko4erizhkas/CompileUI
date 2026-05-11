@@ -49,7 +49,13 @@ qt_add_qml_module(CompileUIQt
         resources/icons/SaveIcon.png
         resources/icons/UserInfoIcon.png
         resources/icons/iconApp.png
-        src/parser/grammatic.txt
+        resources/src_for_text_menu/grammatic.txt
+        resources/src_for_text_menu/aboutProgram.txt
+        resources/src_for_text_menu/forUsers.txt
+        resources/src_for_text_menu/sourceCode.txt
+        resources/src_for_text_menu/methodAnalyze.txt
+        resources/src_for_text_menu/classification.txt
+        resources/src_for_text_menu/literature.txt
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

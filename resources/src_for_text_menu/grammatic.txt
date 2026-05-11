@@ -1,5 +1,28 @@
-Грамматика для прототипов функции С\С++ ( Пример: void f(int dada,float net); )
-G[<Z>]:
+Определим грамматику создания прототипа функции С\С++ G[Z] в нотации Хомского с продукциями P:
+G[Z]:
+
+G[Z] = {VT, VN, P, Z}
+
+VT = {'0'...'9', 'a'...'z', 'A'...'Z', '_', '(',')', ',', ';' }
+Vn = { 
+<TYPE_FUNC>,
+<AFTER_TYPE>, 
+<SPACE_AFTER_FUNC_TYPE>, 
+<ID_FUNC>, 
+<PARAMS>, 
+<AFTER_RPAREN>,
+<SPACE_TYPE_PARAMS>, 
+<PARAM_AFTER_SPACE_TYPE>, 
+<ID_PARAM>,
+<PARAM_TAIL>, 
+<AFTER_COMMA>, 
+<AFTER_RPAREN>, 
+<END>, 
+<letter>, 
+<digit>,
+<type>
+} 
+P = {
 1. <TYPE_FUNC> → type <AFTER_TYPE>
 2. <AFTER_TYPE> -> ' ' <SPACE_AFTER_FUNC_TYPE>
 3. <SPACE_AFTER_FUNC_TYPE> → id_func <ID_FUNC>
@@ -16,17 +39,9 @@ G[<Z>]:
 14. <AFTER_COMMA> → type <SPACE_TYPE_PARAMS>
 15. <SPACE_TYPE_PARAMS> -> ' ' <PARAM_AFTER_SPACE_TYPE>
 16. <AFTER_RPAREN> → ';' <END>
-
-
+17. <letter> -> 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'
+18. <digit> -> '0' | '1' | ... | '9'
+19. <type> -> 'void' | 'int' | 'short' | 'float' | 'double' 
+}
 
 Z = <TYPE_FUNC>
-
-type = 'void' | 'int' | 'short' | 'float' | 'double'
-Vt = {a, b, ..., z, A, B, ..., Z, 0, 1, ..., 9, (, ), ;, _}
-Vn = 
-{<TYPE_FUNC>, <AFTER_TYPE>, <SPACE_AFTER_FUNC_TYPE>, 
-<ID_FUNC>, <PARAMS>, <AFTER_RPAREN>,
-<SPACE_TYPE_PARAMS>, <PARAM_AFTER_SPACE_TYPE>, <ID_PARAM>,
-<PARAM_TAIL>, <AFTER_COMMA>, <AFTER_RPAREN>, <END>} 
-
-i$nt asdad(short net, )
