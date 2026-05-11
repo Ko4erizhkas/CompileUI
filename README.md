@@ -30,6 +30,8 @@ return a + b;
 ![](./resources/src_for_readme/lab7/lab7_4_3.png)
 
 ![](./resources/src_for_readme/lab7/lab7_4_3.png)
+## Лабораторная работа 5. Построение AST и проверка контекстно-зависимых условий
+**
 ## Лабораторная работа 3. Разработка синтаксического анализатора (парсера)
 **Цель работы:** Изучить назначение и принципы работы синтаксического анализатора в структуре компилятора. Спроектировать грамматику, построить соответствующую схему метода анализа грамматики и выполнить программную реализацию парсера с нейтрализацией синтаксических ошибок методом Айронса. Интегрировать разработанный модуль в ранее созданный графический интерфейс языкового процессора.
 
@@ -59,24 +61,32 @@ return a + b;
 ```
 1. <TYPE_FUNC> → type <AFTER_TYPE>
 2. <AFTER_TYPE> -> ' ' <SPACE_AFTER_FUNC_TYPE>
-3. <SPACE_AFTER_FUNC_TYPE> → id <AFTER_ID>
-4. <AFTER_ID> → '(' <PARAMS>
-5. <PARAMS> → ')' <AFTER_RPAREN>
-6. <PARAMS> → type ' ' <PARAM_AFTER_TYPE>
-7. <PARAM_AFTER_TYPE> → id <PARAM_TAIL>
-8. <PARAM_TAIL> → ',' <AFTER_COMMA>
-9. <PARAM_TAIL> → ')' <AFTER_RPAREN>
-10. <AFTER_COMMA> → type ' ' <PARAM_AFTER_TYPE>
-11. <AFTER_RPAREN> → ';'
+3. <SPACE_AFTER_FUNC_TYPE> → id_func <ID_FUNC>
+4. <ID_FUNC> -> letter <ID_FUNC> | digit <ID_FUNC> | '_' <ID_FUNC> 
+5. <ID_FUNC> → '(' <PARAMS>
+6. <PARAMS> → ')' <AFTER_RPAREN>
+7. <PARAMS> → type <SPACE_TYPE_PARAMS> 
+8. <SPACE_TYPE_PARAMS> -> ' '<PARAM_AFTER_SPACE_TYPE>
+9. <PARAM_AFTER_SPACE_TYPE> → id_param <ID_PARAM>
+10. <ID_PARAM> -> letter <ID_PARAM> | digit <ID_PARAM> | '_' <ID_PARAM>
+11. <ID_PARAM> -> <PARAM_TAIL>
+12. <PARAM_TAIL> → ',' <AFTER_COMMA>
+13. <PARAM_TAIL> → ')' <AFTER_RPAREN>
+14. <AFTER_COMMA> → type <SPACE_TYPE_PARAMS>
+15. <SPACE_TYPE_PARAMS> -> ' ' <PARAM_AFTER_SPACE_TYPE>
+16. <AFTER_RPAREN> → ';' <END>
 
-12. id → letter <ID_TAIL>
-13. <ID_TAIL> → letter <ID_TAIL> | digit <ID_TAIL> | '_' <ID_TAIL> | e
+
 
 Z = <TYPE_FUNC>
 
 type = 'void' | 'int' | 'short' | 'float' | 'double'
 Vt = {a, b, ..., z, A, B, ..., Z, 0, 1, ..., 9, (, ), ;, _}
-Vn = {<TYPE_FUNC>, <AFTER_TYPE>, <AFTER_ID>, <PARAMS>, <AFTER_RPAREN>, <PARAM_AFTER_TYPE>, <PARAM_TAIL>, <AFTER_COMMA>, <ID_TAIL>, <SPACE_AFTER_FUNC_TYPE>}
+Vn = 
+{<TYPE_FUNC>, <AFTER_TYPE>, <SPACE_AFTER_FUNC_TYPE>, 
+<ID_FUNC>, <PARAMS>, <AFTER_RPAREN>,
+<SPACE_TYPE_PARAMS>, <PARAM_AFTER_SPACE_TYPE>, <ID_PARAM>,
+<PARAM_TAIL>, <AFTER_COMMA>, <AFTER_RPAREN>, <END>} 
 ```
 
 **Классификация грамматики по Хомскому: Автоматная грамматика**
