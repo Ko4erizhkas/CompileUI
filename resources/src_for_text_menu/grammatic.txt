@@ -39,9 +39,9 @@ P = {
 14. <AFTER_COMMA> → type <SPACE_TYPE_PARAMS>
 15. <SPACE_TYPE_PARAMS> -> ' ' <PARAM_AFTER_SPACE_TYPE>
 16. <AFTER_RPAREN> → ';' <END>
-17. <letter> -> 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'
-18. <digit> -> '0' | '1' | ... | '9'
-19. <type> -> 'void' | 'int' | 'short' | 'float' | 'double' 
+17. letter -> 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'
+18. digit -> '0' | '1' | ... | '9'
+19. type -> 'void' | 'int' | 'short' | 'float' | 'double' 
 }
 
 Z = <TYPE_FUNC>
