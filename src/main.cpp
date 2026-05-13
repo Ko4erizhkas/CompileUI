@@ -7,6 +7,7 @@
 #include "src/parser/parser.h"
 #include "src/models/tokenTableModel/tokenTableModel.h"
 #include "src/models/parserTableModel/parserTableModel.h"
+#include "src/regularExpr/regularExpr.h"
 #include "textfilestorage.h"
 
 int main(int argc, char *argv[])
@@ -19,6 +20,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     Lexer lexer;
     Parser parser;
+    RegularExpr regExp;
     TokenTableModel tokenTableModel;
     ParserTableModel parserTableModel;
 
@@ -29,6 +31,8 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("parser", &parser);
     engine.rootContext()->setContextProperty("tokenTableModel", &tokenTableModel);
     engine.rootContext()->setContextProperty("parserTableModel", &parserTableModel);
+    engine.rootContext()->setContextProperty("regExp", &regExp);
+
     QObject::connect(&engine,
         &QQmlApplicationEngine::objectCreationFailed,
         &app,

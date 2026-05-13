@@ -24,7 +24,7 @@ ApplicationWindow {
 
     property string tokenOutputText: ""
     property string parserOutputText: ""
-
+    property string regExpOutputText: ""
 
     TextFileStorage {
         id: fileStorage
@@ -329,6 +329,7 @@ ApplicationWindow {
             }
         }
         Menu { 
+            id: menuStart
             title: "Пуск"
             Action {
                 text: "Запуск лексера"
@@ -342,6 +343,31 @@ ApplicationWindow {
                 onTriggered: {
                     parserOutputText = parser.parse(sourceEditor.text)
                     outputEditor.text = parserOutputText
+                }
+            }
+            Menu {
+                id: regularMenu
+                title: "Регулярные выражения"
+                Action {
+                    text: "Все числа,\nкоторые начинаются на 9"
+                    onTriggered:{
+                        regExpOutputText = regExp.expression1(sourceEditor.text)
+                        outputEditor.text = regExpOutputText
+                    }
+                }
+                Action {
+                    text: "Восьмеричные числа\n(с префиксами 0o, &O, 0)"
+                    onTriggered:{
+                        regExpOutputText = regExp.expression2(sourceEditor.text)
+                        outputEditor.text = regExpOutputText
+                    }
+                }
+                Action {
+                    text: "На соответствие формату\nкодирования Base32."
+                    onTriggered:{
+                        regExpOutputText = regExp.expression3(sourceEditor.text)
+                        outputEditor.text = regExpOutputText
+                    }
                 }
             }
         }
