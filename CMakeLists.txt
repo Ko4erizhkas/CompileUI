@@ -32,6 +32,9 @@ qt_add_executable(CompileUIQt
 
     src/regularExpr/regularExpr.cpp
     src/regularExpr/regularExpr.h
+
+    src/ast/ast.h
+    src/ast/ast.cpp
 )
 
 qt_add_qml_module(CompileUIQt

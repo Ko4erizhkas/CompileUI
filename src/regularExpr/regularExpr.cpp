@@ -2,6 +2,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QRegularExpressionMatchIterator>
+
 RegularExpr::RegularExpr(QObject* parent) : QObject(parent) {}
 
 QString RegularExpr::expression1(const QString text)
