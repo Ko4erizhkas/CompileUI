@@ -25,6 +25,7 @@ ApplicationWindow {
     property string tokenOutputText: ""
     property string parserOutputText: ""
     property string regExpOutputText: ""
+    property string astOutputText: ""
 
     TextFileStorage {
         id: fileStorage
@@ -129,6 +130,10 @@ ApplicationWindow {
         case "analyze":
             parserOutputText = parser.parse(sourceEditor.text)
             outputEditor.text = parserOutputText
+            break
+        case "astTree":
+            astOutputText = ast.buildTree(sourceEditor.text)
+            outputEditor.text = astOutputText
             break
         case "userInfo":
             outputEditor.text = "Руководство пользователя"
@@ -345,6 +350,10 @@ ApplicationWindow {
                     outputEditor.text = parserOutputText
                 }
             }
+            Action {
+                text: "Построение AST"
+                onTriggered: handleToolBarAction("astTree")
+            }
             Menu {
                 id: regularMenu
                 title: "Регулярные выражения"
@@ -460,186 +469,291 @@ ApplicationWindow {
                     font.pixelSize: 14
                 }
             }
-            SplitView {
-                id: rightSplitView
+            Frame {
                 SplitView.fillWidth: true
                 SplitView.preferredWidth: root.width * 0.45
-                orientation: Qt.Vertical
 
-                Frame {
-                    SplitView.fillWidth: true
-                    SplitView.preferredHeight: rightSplitView.height / 2
-                    ColumnLayout {
-                        anchors.fill: parent
-                        spacing: 4
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 4
 
-                        RowLayout {
-                            Layout.fillWidth: true
-                            Label {
-                                text: "Таблица токенов"
-                                font.bold: true
-                            }
-                            Item { Layout.fillWidth: true }
-                            TabBar {
-                                id: tokenViewTab
-                                implicitHeight: 30
-                                TabButton {
-                                    text: "Таблица"
-                                    implicitHeight: 30
-                                    font.pixelSize: 13
-                                }
-                                TabButton {
-                                    text: "Текст"
-                                    implicitHeight: 30
-                                    font.pixelSize: 13
-                                }
-                            }
+                    TabBar {
+                        id: tablesTab
+                        Layout.fillWidth: true
+                        implicitHeight: 34
+                        TabButton {
+                            text: "Токены"
+                            implicitHeight: 34
+                            font.pixelSize: 13
                         }
-
-                        HorizontalHeaderView {
-                            syncView: tokenTableView
-                            model: ["Линия", "Позиция", "Лексема", "Тип токена"]
-                            Layout.fillWidth: true
-                            visible: tokenViewTab.currentIndex === 0
+                        TabButton {
+                            text: "Ошибки парсера"
+                            implicitHeight: 34
+                            font.pixelSize: 13
                         }
-
-                        StackLayout {
-                            currentIndex: tokenViewTab.currentIndex
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-
-                            TableView {
-                                id: tokenTableView
-                                model: tokenTableModel
-                                clip: true
-                                columnSpacing: 1
-                                rowSpacing: 1
-                                columnWidthProvider: function(column) {
-                                    const rest = width - 60 - 60 - 110 - columnSpacing * 3
-                                    switch (column) {
-                                        case 0: return 60
-                                        case 1: return 60
-                                        case 2: return Math.max(110, rest)
-                                        case 3: return 110
-                                    }
-                                }
-                                onWidthChanged: forceLayout()
-                                delegate: Rectangle {
-                                    implicitHeight: 26
-                                    color: row % 2 === 0 ? "#ffffff" : "#f5f5f5"
-                                    border.color: "#d0d0d0"
-                                    Text {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 8
-                                        text: display ?? ""
-                                        color: "#202020"
-                                        font.pixelSize: 14
-                                        elide: Text.ElideRight
-                                        width: parent.width - 12
-                                    }
-                                }
-                            }
-
-                            ScrollView {
-                                clip: true
-                                TextArea {
-                                    readOnly: true
-                                    text: tokenOutputText
-                                    font.family: "Consolas, Courier New"
-                                    font.pixelSize: 14
-                                    wrapMode: TextEdit.Wrap
-                                    placeholderText: "Нет данных"
-                                }
-                            }
+                        TabButton {
+                            text: "AST / Семантические ошибки"
+                            implicitHeight: 34
+                            font.pixelSize: 13
                         }
                     }
-                }
 
-                Frame {
-                    SplitView.fillWidth: true
-                    SplitView.preferredHeight: rightSplitView.height / 2
-                    ColumnLayout {
-                        anchors.fill: parent
-                        spacing: 4
+                    StackLayout {
+                        currentIndex: tablesTab.currentIndex
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
 
-                        RowLayout {
-                            Layout.fillWidth: true
-                            Label {
-                                text: "Ошибки парсера"
-                                font.bold: true
-                            }
-                            Item { Layout.fillWidth: true }
-                            TabBar {
-                                id: parserViewTab
-                                implicitHeight: 30
-                                TabButton {
-                                    text: "Таблица"
-                                    implicitHeight: 30
-                                    font.pixelSize: 13
+                        ColumnLayout {
+                            spacing: 4
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Label {
+                                    text: "Таблица токенов"
+                                    font.bold: true
                                 }
-                                TabButton {
-                                    text: "Текст"
+                                Item { Layout.fillWidth: true }
+                                TabBar {
+                                    id: tokenViewTab
                                     implicitHeight: 30
-                                    font.pixelSize: 13
-                                }
-                            }
-                        }
-
-                        HorizontalHeaderView {
-                            syncView: parserTableView
-                            model: ["Линия", "Позиция", "Тип токена", "Описание ошибки"]
-                            Layout.fillWidth: true
-                            visible: parserViewTab.currentIndex === 0
-                        }
-
-                        StackLayout {
-                            currentIndex: parserViewTab.currentIndex
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-
-                            TableView {
-                                id: parserTableView
-                                model: parserTableModel
-                                clip: true
-                                columnSpacing: 1
-                                rowSpacing: 1
-                                columnWidthProvider: function(column) {
-                                    const rest = width - 60 - 60 - 110 - columnSpacing * 3
-                                    switch (column) {
-                                        case 0: return 60
-                                        case 1: return 60
-                                        case 2: return 110
-                                        case 3: return Math.max(150, rest)
+                                    TabButton {
+                                        text: "Таблица"
+                                        implicitHeight: 30
+                                        font.pixelSize: 13
+                                    }
+                                    TabButton {
+                                        text: "Текст"
+                                        implicitHeight: 30
+                                        font.pixelSize: 13
                                     }
                                 }
-                                onWidthChanged: forceLayout()
-                                delegate: Rectangle {
-                                    implicitHeight: 26
-                                    color: row % 2 === 0 ? "#ffffff" : "#f5f5f5"
-                                    border.color: "#d0d0d0"
-                                    Text {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 8
-                                        text: display ?? ""
-                                        color: "#202020"
+                            }
+
+                            HorizontalHeaderView {
+                                syncView: tokenTableView
+                                model: ["Линия", "Позиция", "Лексема", "Тип токена"]
+                                Layout.fillWidth: true
+                                visible: tokenViewTab.currentIndex === 0
+                            }
+
+                            StackLayout {
+                                currentIndex: tokenViewTab.currentIndex
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                TableView {
+                                    id: tokenTableView
+                                    model: tokenTableModel
+                                    clip: true
+                                    columnSpacing: 1
+                                    rowSpacing: 1
+                                    columnWidthProvider: function(column) {
+                                        const rest = width - 60 - 60 - 110 - columnSpacing * 3
+                                        switch (column) {
+                                            case 0: return 60
+                                            case 1: return 60
+                                            case 2: return Math.max(110, rest)
+                                            case 3: return 110
+                                        }
+                                    }
+                                    onWidthChanged: forceLayout()
+                                    delegate: Rectangle {
+                                        implicitHeight: 26
+                                        color: row % 2 === 0 ? "#ffffff" : "#f5f5f5"
+                                        border.color: "#d0d0d0"
+                                        Text {
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 8
+                                            text: display ?? ""
+                                            color: "#202020"
+                                            font.pixelSize: 14
+                                            elide: Text.ElideRight
+                                            width: parent.width - 12
+                                        }
+                                    }
+                                }
+
+                                ScrollView {
+                                    clip: true
+                                    TextArea {
+                                        readOnly: true
+                                        text: tokenOutputText
+                                        font.family: "Consolas, Courier New"
                                         font.pixelSize: 14
-                                        elide: Text.ElideRight
-                                        width: parent.width - 12
+                                        wrapMode: TextEdit.Wrap
+                                        placeholderText: "Нет данных"
+                                    }
+                                }
+                            }
+                        }
+
+                        ColumnLayout {
+                            spacing: 4
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Label {
+                                    text: "Ошибки парсера"
+                                    font.bold: true
+                                }
+                                Item { Layout.fillWidth: true }
+                                TabBar {
+                                    id: parserViewTab
+                                    implicitHeight: 30
+                                    TabButton {
+                                        text: "Таблица"
+                                        implicitHeight: 30
+                                        font.pixelSize: 13
+                                    }
+                                    TabButton {
+                                        text: "Текст"
+                                        implicitHeight: 30
+                                        font.pixelSize: 13
                                     }
                                 }
                             }
 
-                            ScrollView {
-                                clip: true
-                                TextArea {
-                                    readOnly: true
-                                    text: parserOutputText
-                                    font.family: "Consolas, Courier New"
-                                    font.pixelSize: 14
-                                    wrapMode: TextEdit.Wrap
-                                    placeholderText: "Нет данных"
+                            HorizontalHeaderView {
+                                syncView: parserTableView
+                                model: ["Линия", "Позиция", "Тип токена", "Описание ошибки"]
+                                Layout.fillWidth: true
+                                visible: parserViewTab.currentIndex === 0
+                            }
+
+                            StackLayout {
+                                currentIndex: parserViewTab.currentIndex
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                TableView {
+                                    id: parserTableView
+                                    model: parserTableModel
+                                    clip: true
+                                    columnSpacing: 1
+                                    rowSpacing: 1
+                                    columnWidthProvider: function(column) {
+                                        const rest = width - 60 - 60 - 110 - columnSpacing * 3
+                                        switch (column) {
+                                            case 0: return 60
+                                            case 1: return 60
+                                            case 2: return 110
+                                            case 3: return Math.max(150, rest)
+                                        }
+                                    }
+                                    onWidthChanged: forceLayout()
+                                    delegate: Rectangle {
+                                        implicitHeight: 26
+                                        color: row % 2 === 0 ? "#ffffff" : "#f5f5f5"
+                                        border.color: "#d0d0d0"
+                                        Text {
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 8
+                                            text: display ?? ""
+                                            color: "#202020"
+                                            font.pixelSize: 14
+                                            elide: Text.ElideRight
+                                            width: parent.width - 12
+                                        }
+                                    }
+                                }
+
+                                ScrollView {
+                                    clip: true
+                                    TextArea {
+                                        readOnly: true
+                                        text: parserOutputText
+                                        font.family: "Consolas, Courier New"
+                                        font.pixelSize: 14
+                                        wrapMode: TextEdit.Wrap
+                                        placeholderText: "Нет данных"
+                                    }
+                                }
+                            }
+                        }
+
+                        ColumnLayout {
+                            spacing: 4
+
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Label {
+                                    text: "AST / Семантические ошибки"
+                                    font.bold: true
+                                }
+                                Item { Layout.fillWidth: true }
+                                TabBar {
+                                    id: astViewTab
+                                    implicitHeight: 30
+                                    TabButton {
+                                        text: "Ошибки"
+                                        implicitHeight: 30
+                                        font.pixelSize: 13
+                                    }
+                                    TabButton {
+                                        text: "Дерево"
+                                        implicitHeight: 30
+                                        font.pixelSize: 13
+                                    }
+                                }
+                            }
+
+                            HorizontalHeaderView {
+                                syncView: astTableView
+                                model: ["Правило", "Линия", "Позиция", "Описание ошибки"]
+                                Layout.fillWidth: true
+                                visible: astViewTab.currentIndex === 0
+                            }
+
+                            StackLayout {
+                                currentIndex: astViewTab.currentIndex
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                TableView {
+                                    id: astTableView
+                                    model: astTableModel
+                                    clip: true
+                                    columnSpacing: 1
+                                    rowSpacing: 1
+                                    columnWidthProvider: function(column) {
+                                        const rest = width - 70 - 60 - 70 - columnSpacing * 3
+                                        switch (column) {
+                                            case 0: return 70
+                                            case 1: return 60
+                                            case 2: return 70
+                                            case 3: return Math.max(150, rest)
+                                        }
+                                    }
+                                    onWidthChanged: forceLayout()
+                                    delegate: Rectangle {
+                                        implicitHeight: 26
+                                        color: row % 2 === 0 ? "#ffffff" : "#f5f5f5"
+                                        border.color: "#d0d0d0"
+                                        Text {
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 8
+                                            text: display ?? ""
+                                            color: "#202020"
+                                            font.pixelSize: 14
+                                            elide: Text.ElideRight
+                                            width: parent.width - 12
+                                        }
+                                    }
+                                }
+
+                                ScrollView {
+                                    clip: true
+                                    TextArea {
+                                        readOnly: true
+                                        text: astOutputText
+                                        font.family: "Consolas, Courier New"
+                                        font.pixelSize: 14
+                                        wrapMode: TextEdit.Wrap
+                                        placeholderText: "Нажмите «Построить AST» в меню «Пуск»"
+                                    }
                                 }
                             }
                         }

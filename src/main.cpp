@@ -5,8 +5,10 @@
 
 #include "src/lexer/lexser.h"
 #include "src/parser/parser.h"
+#include "src/ast/ast.h"
 #include "src/models/tokenTableModel/tokenTableModel.h"
 #include "src/models/parserTableModel/parserTableModel.h"
+#include "src/models/astTableModel/astTableModel.h"
 #include "src/regularExpr/regularExpr.h"
 #include "textfilestorage.h"
 
@@ -20,17 +22,22 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     Lexer lexer;
     Parser parser;
+    AST ast;
     RegularExpr regExp;
     TokenTableModel tokenTableModel;
     ParserTableModel parserTableModel;
+    AstTableModel astTableModel;
 
     QObject::connect(&lexer, &Lexer::tokensReady, &tokenTableModel, &TokenTableModel::updateTokens);
     QObject::connect(&parser, &Parser::errorsReady, &parserTableModel, &ParserTableModel::updateErrors);
+    QObject::connect(&ast, &AST::semanticErrorsReady, &astTableModel, &AstTableModel::updateErrors);
 
     engine.rootContext()->setContextProperty("lexer", &lexer);
     engine.rootContext()->setContextProperty("parser", &parser);
+    engine.rootContext()->setContextProperty("ast", &ast);
     engine.rootContext()->setContextProperty("tokenTableModel", &tokenTableModel);
     engine.rootContext()->setContextProperty("parserTableModel", &parserTableModel);
+    engine.rootContext()->setContextProperty("astTableModel", &astTableModel);
     engine.rootContext()->setContextProperty("regExp", &regExp);
 
     QObject::connect(&engine,

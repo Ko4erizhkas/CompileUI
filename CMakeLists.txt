@@ -26,6 +26,9 @@ qt_add_executable(CompileUIQt
     src/models/parserTableModel/parserTableModel.cpp
     src/models/parserTableModel/parserTableModel.h
 
+    src/models/astTableModel/astTableModel.cpp
+    src/models/astTableModel/astTableModel.h
+
     src/parser/parser.cpp
     src/parser/parser.h
     src/parser/errorParser/errorParser.h
