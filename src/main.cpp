@@ -10,6 +10,7 @@
 #include "src/models/parserTableModel/parserTableModel.h"
 #include "src/models/astTableModel/astTableModel.h"
 #include "src/regularExpr/regularExpr.h"
+#include "src/clangllvm/clangllvm.h"
 #include "textfilestorage.h"
 
 int main(int argc, char *argv[])
@@ -24,6 +25,7 @@ int main(int argc, char *argv[])
     Parser parser;
     AST ast;
     RegularExpr regExp;
+    ClangLlvm clangLlvm;
     TokenTableModel tokenTableModel;
     ParserTableModel parserTableModel;
     AstTableModel astTableModel;
@@ -39,6 +41,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("parserTableModel", &parserTableModel);
     engine.rootContext()->setContextProperty("astTableModel", &astTableModel);
     engine.rootContext()->setContextProperty("regExp", &regExp);
+    engine.rootContext()->setContextProperty("clangLlvm", &clangLlvm);
 
     QObject::connect(&engine,
         &QQmlApplicationEngine::objectCreationFailed,

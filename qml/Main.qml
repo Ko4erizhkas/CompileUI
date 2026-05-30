@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import QtCore
 import QtQuick.Controls
 import QtQuick.Controls.Universal
@@ -26,9 +27,81 @@ ApplicationWindow {
     property string parserOutputText: ""
     property string regExpOutputText: ""
     property string astOutputText: ""
+    property string clangOutputText: ""
+
+    property var cfgImageList: []
+    property int cfgIndex: 0
 
     TextFileStorage {
         id: fileStorage
+    }
+
+    Connections {
+        target: clangLlvm
+        function onCfgImagesReady(pngUrls) {
+            cfgImageList = pngUrls
+            cfgIndex = 0
+            if (pngUrls.length > 0)
+                cfgWindow.show()
+        }
+        function onToolError(message) {
+            outputEditor.text = message
+        }
+    }
+
+    Window {
+        id: cfgWindow
+        width: 900
+        height: 700
+        title: "CFG — граф потока управления"
+            + (cfgImageList.length > 1
+                ? "  (" + (cfgIndex + 1) + " / " + cfgImageList.length + ")"
+                : "")
+        color: "#ffffff"
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 8
+            spacing: 6
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 8
+                visible: cfgImageList.length > 1
+
+                Button {
+                    text: "← Предыдущая"
+                    enabled: cfgIndex > 0
+                    onClicked: cfgIndex = Math.max(0, cfgIndex - 1)
+                }
+                Label {
+                    text: "Функция " + (cfgIndex + 1) + " из " + cfgImageList.length
+                    Layout.alignment: Qt.AlignVCenter
+                }
+                Button {
+                    text: "Следующая →"
+                    enabled: cfgIndex < cfgImageList.length - 1
+                    onClicked: cfgIndex = Math.min(cfgImageList.length - 1, cfgIndex + 1)
+                }
+                Item { Layout.fillWidth: true }
+            }
+
+            ScrollView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                clip: true
+                contentWidth: cfgImage.width
+                contentHeight: cfgImage.height
+
+                Image {
+                    id: cfgImage
+                    source: cfgImageList.length > 0 ? cfgImageList[cfgIndex] : ""
+                    fillMode: Image.Pad
+                    cache: false
+                    smooth: true
+                }
+            }
+        }
     }
     function finalExit()
     {
@@ -376,6 +449,37 @@ ApplicationWindow {
                     onTriggered:{
                         regExpOutputText = regExp.expression3(sourceEditor.text)
                         outputEditor.text = regExpOutputText
+                    }
+                }
+            }
+            Menu {
+                id: clangLlvmMenu
+                title: "Clang + LLVM"
+                Action {
+                    text: "Построение AST"
+                    onTriggered: {
+                        clangOutputText = clangLlvm.dumpAst()
+                        outputEditor.text = clangOutputText
+                    }
+                }
+                Action {
+                    text: "Оптимизация -O0"
+                    onTriggered: {
+                        clangOutputText = clangLlvm.emitIr(0)
+                        outputEditor.text = clangOutputText
+                    }
+                }
+                Action {
+                    text: "Оптимизация -O2"
+                    onTriggered: {
+                        clangOutputText = clangLlvm.emitIr(2)
+                        outputEditor.text = clangOutputText
+                    }
+                }
+                Action {
+                    text: "Построение CFG"
+                    onTriggered: {
+                        outputEditor.text = clangLlvm.buildCfg()
                     }
                 }
             }

@@ -38,6 +38,9 @@ qt_add_executable(CompileUIQt
 
     src/ast/ast.h
     src/ast/ast.cpp
+
+    src/clangllvm/clangllvm.h
+    src/clangllvm/clangllvm.cpp
 )
 
 qt_add_qml_module(CompileUIQt
@@ -67,6 +70,7 @@ qt_add_qml_module(CompileUIQt
         resources/src_for_text_menu/literature.txt
         resources/src_for_text_menu/examples.txt
         resources/src_for_text_menu/problem.txt
+        resources/clang_src/program.cpp
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
