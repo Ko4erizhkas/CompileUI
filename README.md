@@ -41,7 +41,7 @@ return a + b;
 
 4. Построение CFG для main и sum<br>
 ![](./resources/src_for_readme/lab7/lab7_4_1.png)<br>
-![](./resources/src_for_readme/lab7/lab7_4_3.png)<br>
+![](./resources/src_for_readme/lab7/lab7_4_2.png)<br>
 ![](./resources/src_for_readme/lab7/lab7_4_3.png)<br>
 
 
