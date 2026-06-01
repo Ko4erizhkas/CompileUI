@@ -36,6 +36,9 @@ qt_add_executable(CompileUIQt
     src/regularExpr/regularExpr.cpp
     src/regularExpr/regularExpr.h
 
+    src/exprAnalyzer/exprAnalyzer.cpp
+    src/exprAnalyzer/exprAnalyzer.h
+
     src/ast/ast.h
     src/ast/ast.cpp
 

@@ -26,6 +26,7 @@ ApplicationWindow {
     property string tokenOutputText: ""
     property string parserOutputText: ""
     property string regExpOutputText: ""
+    property string exprOutputText: ""
     property string astOutputText: ""
     property string clangOutputText: ""
 
@@ -450,6 +451,13 @@ ApplicationWindow {
                         regExpOutputText = regExp.expression3(sourceEditor.text)
                         outputEditor.text = regExpOutputText
                     }
+                }
+            }
+            Action {
+                text: "Анализ выражений(ПОЛИЗ)"
+                onTriggered: {
+                    exprOutputText = exprAnalyzer.analyze(sourceEditor.text)
+                    outputEditor.text = exprOutputText
                 }
             }
             Menu {
